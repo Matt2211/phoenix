@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   modules: ['lenis/nuxt', '@nuxtjs/seo'],
 
   site: {
-    url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    url: 'http://localhost:3000',
     name: 'Lisa Marini CBT',
     description: 'Lisa Marini CBT',
     defaultLocale: 'en',
@@ -22,5 +22,12 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+  },
+
+  nitro: {
+    prerender: {
+      routes: ['/'],
+      ignore: ['/sitemap.xml'],
+    },
   },
 })
