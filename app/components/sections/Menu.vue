@@ -1,7 +1,7 @@
 <template>
   <header class="fixed top-8 z-50 w-full">
     <div
-      class="container m-auto flex items-center rounded-full bg-white/80 px-4 py-3 backdrop-blur-xs">
+      class="container m-auto flex items-center rounded-full bg-white/80 px-4 py-3 shadow backdrop-blur-xs">
       <!-- Logo / Brand -->
       <div class="flex-1 text-2xl font-bold">
         <a href="#hero" @click.prevent="handleNavigate('#hero')">
@@ -30,7 +30,7 @@
         <Button variant="basic" @click="consultationModal?.openModal()">
           Free consultation
         </Button>
-        <Button @click="handleNavigate('#contacts')"> Book session </Button>
+        <Button> Book session </Button>
       </div>
     </div>
   </header>
@@ -66,10 +66,10 @@ const menuItems: MenuItem[] = [
     label: 'What to Expect',
     target: '#session',
   },
-  {
-    label: 'Contacts',
-    target: '#contacts',
-  },
+  // {
+  //   label: 'Contacts',
+  //   target: '#contacts',
+  // },
 ]
 
 let lenis: InstanceType<typeof Lenis> | null = null

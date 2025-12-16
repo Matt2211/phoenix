@@ -1,37 +1,50 @@
 <template>
   <section
     id="session"
-    class="item-center m-auto my-32 flex min-h-screen max-w-7xl flex-col justify-center py-32">
-    <div class="m-auto max-w-3xl text-center">
-      <h2 class="mb-2">{{ how.title }}</h2>
-      <p class="lead">{{ how.subTitle }}</p>
-    </div>
-
-    <div class="mt-32 flex flex-col gap-12">
-      <div
-        v-for="(phase, index) in how.phases"
-        class="border-primary m-auto grid w-full max-w-2xl items-center gap-12 rounded-4xl border border-b p-12">
+    class="m-auto flex min-h-screen max-w-6xl flex-col items-center justify-center py-36">
+    <div class="mt-12 mb-12 grid items-center gap-12 md:grid-cols-2">
+      <div class="flex flex-col gap-12">
         <div class="flex flex-col">
-          <div class="flex flex-col">
-            <span class="mb-4 text-9xl font-bold text-violet-400/10">
-              {{ String(index + 1).padStart(2, '0') }}
-            </span>
-            <h3 class="text-6xl tracking-wider">{{ phase.name }}</h3>
-            <h4 class="mb-6">{{ phase.description }}</h4>
-          </div>
+          <h2 class="mb-4">{{ how.title }}</h2>
+          <p class="lead">{{ how.subTitle }}</p>
         </div>
 
-        <div class="flex flex-col">
-          <p class="lead">{{ phase.info }}</p>
+        <div>
+          <Button> Book session </Button>
+        </div>
+      </div>
+
+      <div class="flex aspect-square flex-col justify-center">
+        <div
+          class="phase-card absolute m-auto flex aspect-square flex-col justify-center rounded-4xl p-12"
+          :class="phase.bg"
+          v-for="(phase, i) in how.phases"
+          :key="`left-${i}`">
+          <span
+            class="font-general-sans mb-12 text-3xl font-bold text-white uppercase">
+            Phase {{ String(i + 1).padStart(2, '0') }}
+          </span>
+
+          <div>
+            <h3 class="split mb-4 text-6xl font-bold">
+              {{ phase.name }}
+            </h3>
+            <p class="text-xl">{{ phase.info }}</p>
+          </div>
+
+          <div></div>
         </div>
       </div>
     </div>
 
-    <div class="m-auto grid grid-cols-1 pt-12 md:grid-cols-3">
-      <div
-        v-for="practice in how.practices"
-        class="border-primary border-r border-l px-12 first:border-0 last:border-0">
-        <h4 class="text-tertiary mb-2 text-base font-semibold">
+    <div
+      class="border-primary grid grid-cols-1 gap-12 border-t pt-12 md:grid-cols-3">
+      <div v-for="practice in how.practices" class="border-primary">
+        <component
+          v-if="icons[practice.icon as keyof typeof icons]"
+          :is="icons[practice.icon as keyof typeof icons]"
+          class="text-quaternary mb-4" />
+        <h4 class="text-tertiary mb-1 text-base font-semibold">
           {{ practice.name }}
         </h4>
         <p class="text-sm">{{ practice.description }}</p>
@@ -42,4 +55,48 @@
 
 <script setup lang="ts">
 import how from '@/content/howItWorks'
+import { onMounted } from 'vue'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+import { Route, ListChecks, CalendarCheck2 } from 'lucide-vue-next'
+
+const icons = {
+  Route,
+  CalendarCheck2,
+  ListChecks,
+}
+
+gsap.registerPlugin(ScrollTrigger)
+
+onMounted(() => {
+  const cards = gsap.utils.toArray<HTMLElement>('.phase-card')
+  const animation = gsap.timeline()
+
+  cards.forEach((card, index) => {
+    gsap.set(card, {
+      opacity: index === 0 ? 1 : 0,
+      zIndex: cards.length - index,
+    })
+
+    if (index > 0 && cards[index - 1]) {
+      animation.to(cards[index - 1] as HTMLElement, {
+        opacity: 0,
+        duration: 0.3,
+      })
+      animation.to(card, {
+        opacity: 1,
+        duration: 0.3,
+      })
+    }
+  })
+
+  ScrollTrigger.create({
+    trigger: '#session',
+    start: 'top top',
+    end: `+=${window.innerHeight * cards.length}`,
+    scrub: true,
+    pin: true,
+    animation,
+  })
+})
 </script>

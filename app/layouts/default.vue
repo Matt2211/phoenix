@@ -1,7 +1,6 @@
 <template>
   <div class="rounded-4xl p-4">
-    <div
-      class="from-white-200 to-white-50 overflow-hidden rounded-4xl bg-linear-to-t">
+    <div class="from-white-200 to-white-50 rounded-4xl bg-linear-to-t">
       <Menu />
       <ConsultationModal ref="consultationModal" />
       <slot />

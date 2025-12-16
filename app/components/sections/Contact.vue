@@ -1,39 +1,49 @@
 <template>
+  <button
+    v-if="!showForm"
+    @click="showForm = true"
+    class="fixed right-4 bottom-4 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-violet-500 text-white shadow-lg hover:bg-violet-600">
+    <Send class="h-6 w-6" />
+  </button>
+
   <section
-    id="contacts"
-    class="mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-6 py-24">
-    <div class="mb-12 text-center">
-      <h2>Get in Touch</h2>
-      <p class="lead">
-        If you would like to ask a question, feel free to send a message.
-      </p>
+    v-if="showForm"
+    class="border-primary fixed right-4 bottom-4 z-50 w-full max-w-md rounded-2xl border bg-white p-6 shadow-lg md:p-6">
+    <div class="mb-12">
+      <div class="flex items-center justify-between">
+        <h3>Get in Touch</h3>
+        <button
+          @click="showForm = false"
+          class="text-tertiary hover:text-primary cursor-pointer">
+          ✕
+        </button>
+      </div>
+      <p>If you would like to ask a question, feel free to send a message.</p>
     </div>
 
-    <form
-      class="w-full rounded-2xl bg-white p-8"
-      @submit.prevent="handleSubmit">
+    <form class="w-full rounded-2xl bg-white" @submit.prevent="handleSubmit">
       <div class="grid gap-6 md:grid-cols-2">
         <!-- Full Name -->
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 md:col-span-2">
           <label for="name" class="text-sm font-medium">Full Name *</label>
           <input
             id="name"
             v-model="form.name"
             type="text"
             required
-            class="border-secondary rounded-lg border px-4 py-3 focus:border-violet-400 focus:outline-none"
+            class="border-secondary rounded-lg border px-4 py-2 focus:border-violet-400 focus:outline-none"
             placeholder="Your full name" />
         </div>
 
         <!-- Email -->
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 md:col-span-2">
           <label for="email" class="text-sm font-medium">Email *</label>
           <input
             id="email"
             v-model="form.email"
             type="email"
             required
-            class="border-secondary rounded-lg border px-4 py-3 focus:border-violet-400 focus:outline-none"
+            class="border-secondary rounded-lg border px-4 py-2 focus:border-violet-400 focus:outline-none"
             placeholder="Your email address" />
         </div>
 
@@ -46,7 +56,7 @@
             id="phone"
             v-model="form.phone"
             type="tel"
-            class="border-secondary rounded-lg border px-4 py-3 focus:border-violet-400 focus:outline-none"
+            class="border-secondary rounded-lg border px-4 py-2 focus:border-violet-400 focus:outline-none"
             placeholder="Your phone number" />
         </div>
       </div>
@@ -59,7 +69,7 @@
           v-model="form.message"
           required
           rows="6"
-          class="border-secondary resize-none rounded-lg border px-4 py-3 focus:border-violet-400 focus:outline-none"
+          class="border-secondary resize-none rounded-lg border px-4 py-2 focus:border-violet-400 focus:outline-none"
           placeholder="Write your message here"></textarea>
       </div>
 
@@ -89,6 +99,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Send } from 'lucide-vue-next'
 
 type ContactForm = {
   name: string
@@ -106,6 +117,7 @@ const form = ref<ContactForm>({
 
 const loading = ref(false)
 const status = ref<'idle' | 'success' | 'error'>('idle')
+const showForm = ref(false)
 
 async function handleSubmit() {
   if (!form.value.name || !form.value.email || !form.value.message) return

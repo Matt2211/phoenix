@@ -18,13 +18,13 @@
     "nuxt": "^4.2.1",
     "photoswipe": "^5.4.4",
     "resend": "^6.4.1",
+    "swiper": "^12.0.3",
     "tailwindcss": "^4.1.16",
     "vite": "^7.1.12",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },
-
-   "devDependencies": {
+  "devDependencies": {
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11"
   }
