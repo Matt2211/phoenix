@@ -23,11 +23,4 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-
-  nitro: {
-    prerender: {
-      routes: ['/'],
-      ignore: ['/sitemap.xml'],
-    },
-  },
 })
