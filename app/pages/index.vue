@@ -1,8 +1,8 @@
 <template>
   <Hero />
-  <About />
   <TherapyAreas />
   <HowItWorks />
+  <About />
   <Faq />
   <Contact />
   <Footer />

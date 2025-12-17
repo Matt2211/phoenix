@@ -6,22 +6,19 @@ export default {
   phases: [
     {
       name: 'Assessment',
-      description:
-        'A focused conversation to clarify your difficulties and therapy goals.',
+      description: 'Clarify goals and priorities together.',
       info: 'The first 1-2 sessions focus on questions such as “What am I struggling with?”, “What happened to me?”, and on defining your therapy goals - “What would I like to improve about myself?”',
       bg: 'bg-gradient-to-r from-amber-200 to-yellow-500',
     },
     {
       name: 'Formulation',
-      description:
-        'Together we identify the patterns behind your struggles and what keeps them going.',
+      description: 'Understand the underlying patterns.',
       info: 'We will work together to make sense of your difficulties, understand what keeps them going, and identify the vicious cycles you may be stuck in.',
       bg: 'bg-gradient-to-r from-blue-200 to-cyan-200',
     },
     {
       name: 'Treatment',
-      description:
-        'A practical stage where you learn CBT tools to create lasting emotional change.',
+      description: 'Apply tools and create change.',
       info: 'This is the most practical phase. You will learn more about your condition or difficulty, and develop coping strategies that you can apply in your daily life to support meaningful change.',
       bg: 'bg-gradient-to-r from-teal-200 to-teal-500',
     },

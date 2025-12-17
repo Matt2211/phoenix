@@ -1,0 +1,20 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_429_92" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="40" height="40">
+<rect x="0.5" y="0.5" width="39" height="39" rx="19.5" fill="#AE6CB8" stroke="#AE6CB8"/>
+</mask>
+<g mask="url(#mask0_429_92)">
+<rect x="0.5" y="0.5" width="39" height="39" rx="19.5" fill="#AE6CB8" stroke="#AE6CB8"/>
+<rect x="-1" y="1" width="22" height="22" rx="3" transform="matrix(-1 0 0 1 52 -2)" stroke="white" stroke-width="2"/>
+<rect x="-1" y="1" width="27" height="27" rx="3" transform="matrix(-1 0 0 1 48 -2)" stroke="white" stroke-width="2"/>
+<rect x="-1" y="1" width="22" height="22" rx="3" transform="matrix(-1 0 0 1 48 16)" stroke="white" stroke-width="2"/>
+<rect x="-1" y="1" width="22" height="22" rx="3" transform="matrix(-1 0 0 1 48 -9)" stroke="white" stroke-width="2"/>
+<rect x="-1" y="1" width="22" height="22" rx="3" transform="matrix(-1 0 0 1 44 29)" stroke="white" stroke-width="2"/>
+<rect x="-1" y="1" width="22" height="22" rx="3" transform="matrix(-1 0 0 1 53 34)" stroke="white" stroke-width="2"/>
+<rect x="-13" y="-1" width="22" height="22" rx="3" stroke="white" stroke-width="2"/>
+<rect x="-9" y="-1" width="27" height="27" rx="3" stroke="white" stroke-width="2"/>
+<rect x="-9" y="17" width="22" height="22" rx="3" stroke="white" stroke-width="2"/>
+<rect x="-9" y="-8" width="22" height="22" rx="3" stroke="white" stroke-width="2"/>
+<rect x="-5" y="30" width="22" height="22" rx="3" stroke="white" stroke-width="2"/>
+<rect x="-14" y="35" width="22" height="22" rx="3" stroke="white" stroke-width="2"/>
+</g>
+</svg>

@@ -1,7 +1,7 @@
 <template>
   <section
     id="session"
-    class="m-auto flex min-h-screen max-w-6xl flex-col items-center justify-center py-36">
+    class="m-auto flex min-h-screen max-w-6xl flex-col items-center justify-center">
     <div class="mt-12 mb-12 grid items-center gap-12 md:grid-cols-2">
       <div class="flex flex-col gap-12">
         <div class="flex flex-col">
@@ -19,18 +19,26 @@
 
       <div class="flex aspect-square flex-col justify-center">
         <div
-          class="phase-card absolute m-auto flex aspect-square flex-col justify-center rounded-4xl p-12"
+          class="phase-card absolute m-auto flex aspect-square flex-col rounded-4xl p-12"
           :class="phase.bg"
           v-for="(phase, i) in how.phases"
           :key="`left-${i}`">
-          <span
-            class="font-general-sans mb-12 text-3xl font-bold text-white uppercase">
-            Phase {{ String(i + 1).padStart(2, '0') }}
-          </span>
+          <div class="flex items-center gap-x-4">
+            <div
+              class="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/50 backdrop-blur-xs">
+              <span class="text-4xl">
+                {{ String(i + 1).padStart(2, '0') }}
+              </span>
+            </div>
 
-          <div>
-            <h3 class="split mb-4 text-6xl font-bold">
+            <h2 class="split text-2xl font-bold">
               {{ phase.name }}
+            </h2>
+          </div>
+
+          <div class="mt-12">
+            <h3 class="mb-4 text-5xl leading-[150%]">
+              {{ phase.description }}
             </h3>
             <p class="text-xl">{{ phase.info }}</p>
           </div>

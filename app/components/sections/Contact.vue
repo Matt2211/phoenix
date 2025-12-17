@@ -2,7 +2,7 @@
   <button
     v-if="!showForm"
     @click="showForm = true"
-    class="fixed right-4 bottom-4 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-violet-500 text-white shadow-lg hover:bg-violet-600">
+    class="fixed right-8 bottom-8 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-violet-500 text-white shadow-lg hover:bg-violet-600">
     <Send class="h-6 w-6" />
   </button>
 

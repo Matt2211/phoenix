@@ -4,8 +4,11 @@
       class="container m-auto flex items-center rounded-full bg-white/80 px-4 py-3 shadow backdrop-blur-xs">
       <!-- Logo / Brand -->
       <div class="flex-1 text-2xl font-bold">
-        <a href="#hero" @click.prevent="handleNavigate('#hero')">
-          Therapy4you
+        <a
+          href="#hero"
+          @click.prevent="handleNavigate('#hero')"
+          class="flex items-center gap-x-3 text-xl">
+          <img src="/logo.svg" alt="logo" /> Therapy4you
         </a>
       </div>
 

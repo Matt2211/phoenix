@@ -284,7 +284,7 @@
   }
 
   h2 {
-    @apply font-general-sans text-6xl font-medium;
+    @apply font-general-sans text-6xl font-semibold;
     line-height: 120%;
     color: var(--color-text-primary);
   }

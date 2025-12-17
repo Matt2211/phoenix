@@ -1,56 +1,51 @@
 <template>
-  <section
-    id="about"
-    class="relative min-h-screen"
-    aria-labelledby="about-title">
+  <section id="about" class="py-32" aria-labelledby="about-title">
     <div
-      class="container mx-auto grid grid-cols-1 items-center gap-12 md:grid-cols-2">
-      <figure class="overflow-hidden rounded-4xl">
-        <img
-          src="/about-test.png"
-          alt="Portrait of Lisa Marini, CBT Therapist"
-          class="h-full w-full object-cover"
-          loading="lazy"
-          decoding="async" />
-      </figure>
-      <article>
-        <header class="mb-8">
-          <h2 id="about-title" class="mb-2">I am Lisa Marini</h2>
-          <p class="text-primary lead">
-            Registred Psychotherapist, BSc, MSc, PGDip, MBABCP.
-          </p>
-        </header>
-        <div class="mt-6 flex flex-col gap-6 leading-relaxed text-gray-700">
-          <p>
-            I hold a BSc (Bachelor of Science) in Psychology and an MSc (Master
-            of Science) in Neuroscience and Neuropsychological Rehabilitation. I
-            began my career supporting individuals with brain injuries and
-            neurological conditions.
-          </p>
-          <p>
-            Following this, I completed a PGDip (Post Graduate Diploma) in CBT
-            (Cognitive Behavioural Therapy), and I became a fully accredited
-            Cognitive Behavioural Therapist (MBABCP - Member of the British
-            Association for Behavioural and Cognitive Psychotherapies),
-            specialising in supporting people with common mental health
-            difficulties.
-          </p>
-          <p>
-            I now have over 10 years of experience working in mental health
-            across both the private and public sectors, supporting adults with a
-            wide range of difficulties, including anxiety, depression, and
-            stress-related concerns. I offer evidence-based CBT in one-to-one
-            online sessions for individuals aged 18 and over.
-          </p>
-          <p>
-            While CBT is my primary therapeutic approach, I also draw from other
-            modalities, such as ACT (Acceptance & Commitment Therapy), CFT
-            (Compassion-Focused Therapy), and mindfulness-based approaches. This
-            integrative style allows me to tailor treatment to your unique
-            needs.
-          </p>
+      class="container m-auto flex items-center justify-center rounded-4xl bg-[url(/ffflux.svg)] bg-cover py-12">
+      <div class="m-auto grid max-w-6xl grid-cols-8 grid-rows-8 gap-8">
+        <div class="grid-col-1 col-span-4 row-span-8 grid gap-8">
+          <div class="rounded-4xl pt-12 backdrop-blur-xs">
+            <h2>Lisa marini</h2>
+            <p class="lead">
+              Registred Psychotherapist, BSc, MSc, PGDip, MBABCP.
+            </p>
+          </div>
+
+          <div class="row-span-6 overflow-hidden rounded-4xl">
+            <img
+              src="/about-placeholder.jpg"
+              class="h-full object-cover"
+              alt="" />
+          </div>
         </div>
-      </article>
+
+        <div
+          class="col-span-4 row-span-8 aspect-square rounded-4xl bg-white/30 p-12 shadow-md backdrop-blur-xs">
+          <p class="text-xl">
+            I hold a BSc in Psychology and an MSc in Neuroscience and
+            Neuropsychological Rehabilitation. I began my career supporting
+            individuals with brain injuries and neurological conditions before
+            completing a PGDip in CBT (Cognitive Behavioural Therapy) and
+            becoming a fully accredited CBT therapist (MBABCP Member of the
+            British Association for Behavioural and Cognitive Psychotherapies),
+            specialising in common mental health difficulties.
+          </p>
+          <p class="text-primary mt-12 font-medium">
+            With over 10 years' experience in private and public mental health
+            services, I support adults with anxiety, depression, and other
+            difficulties through evidence-based one-to-one online therapy. While
+            CBT is my main approach, I also draw on ACT (Acceptance & Commitment
+            Therapy), CFT (Compassion-Focused Therapy), and mindfulness-based
+            strategies to tailor treatment to each person's needs.
+          </p>
+
+          <Linkedin class="mt-12" fill="black" />
+        </div>
+      </div>
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import { Linkedin } from 'lucide-vue-next'
+</script>
