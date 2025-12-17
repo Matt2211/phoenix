@@ -76,12 +76,13 @@ function raf(time: number) {
   lenis.raf(time * 1000)
 }
 
-onMounted(() => {
-  // Initialise Lenis for smooth scrolling driven by GSAP's ticker
-  lenis = new Lenis({
-    smoothWheel: true,
-  })
+onMounted(async () => {
+  if (!process.client) return
 
+  const { default: Lenis } = await import('lenis')
+  const { gsap } = await import('gsap')
+
+  lenis = new Lenis({ smoothWheel: true })
   gsap.ticker.add(raf)
 })
 

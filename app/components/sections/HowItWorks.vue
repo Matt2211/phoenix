@@ -56,8 +56,6 @@
 <script setup lang="ts">
 import how from '@/content/howItWorks'
 import { onMounted } from 'vue'
-import gsap from 'gsap'
-import ScrollTrigger from 'gsap/ScrollTrigger'
 import { Route, ListChecks, CalendarCheck2 } from 'lucide-vue-next'
 
 const icons = {
@@ -66,9 +64,14 @@ const icons = {
   ListChecks,
 }
 
-gsap.registerPlugin(ScrollTrigger)
+onMounted(async () => {
+  if (!process.client) return
 
-onMounted(() => {
+  const { default: gsap } = await import('gsap')
+  const { default: ScrollTrigger } = await import('gsap/ScrollTrigger')
+
+  gsap.registerPlugin(ScrollTrigger)
+
   const cards = gsap.utils.toArray<HTMLElement>('.phase-card')
   const animation = gsap.timeline()
 
@@ -93,7 +96,7 @@ onMounted(() => {
   ScrollTrigger.create({
     trigger: '#session',
     start: 'top top',
-    end: `+=${window.innerHeight * cards.length}`,
+    end: () => `+=${window.innerHeight * cards.length}`,
     scrub: true,
     pin: true,
     animation,
