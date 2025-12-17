@@ -79,10 +79,7 @@
       </p>
 
       <div class="max-md:col-span-2 md:ml-auto">
-        <Button class="w-full" @click="showContactForm = true">{{
-          areas.ctaBtn
-        }}</Button>
-        <Contact v-if="showContactForm" @close="showContactForm = false" />
+        <Button class="w-full" @click="openForm()">{{ areas.ctaBtn }}</Button>
       </div>
     </div>
   </section>
@@ -97,13 +94,13 @@ import type { Swiper as SwiperInstance } from 'swiper/types'
 
 import areas from '~/content/areas'
 import { CircleArrowLeft, CircleArrowRight } from 'lucide-vue-next'
-import Contact from './Contact.vue'
+import { useContactForm } from '~/composables/useContactForm'
 
 const modules = [Autoplay]
 const swiperInstance = ref<SwiperInstance | null>(null)
 const isHovered = ref(false)
 
-const showContactForm = ref(false)
+const { openForm } = useContactForm()
 
 const onSwiper = (swiper: SwiperInstance) => {
   swiperInstance.value = swiper

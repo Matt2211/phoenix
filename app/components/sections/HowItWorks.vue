@@ -11,6 +11,9 @@
 
         <div>
           <Button> Book session </Button>
+          <Button variant="basic" @click="consultationModal?.openModal()">
+            Free consultation
+          </Button>
         </div>
       </div>
 
@@ -57,6 +60,8 @@
 import how from '@/content/howItWorks'
 import { onMounted } from 'vue'
 import { Route, ListChecks, CalendarCheck2 } from 'lucide-vue-next'
+
+const consultationModal = inject('consultationModal') as Ref<any> | null
 
 const icons = {
   Route,

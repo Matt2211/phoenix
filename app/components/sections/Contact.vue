@@ -13,7 +13,7 @@
       <div class="flex items-center justify-between">
         <h3>Get in Touch</h3>
         <button
-          @click="showForm = false"
+          @click="closeForm()"
           class="text-tertiary hover:text-primary cursor-pointer">
           ✕
         </button>
@@ -100,6 +100,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Send } from 'lucide-vue-next'
+import { useContactForm } from '~/composables/useContactForm'
 
 type ContactForm = {
   name: string
@@ -117,7 +118,7 @@ const form = ref<ContactForm>({
 
 const loading = ref(false)
 const status = ref<'idle' | 'success' | 'error'>('idle')
-const showForm = ref(false)
+const { showForm, closeForm } = useContactForm()
 
 async function handleSubmit() {
   if (!form.value.name || !form.value.email || !form.value.message) return

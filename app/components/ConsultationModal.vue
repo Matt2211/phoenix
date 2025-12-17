@@ -21,9 +21,84 @@
         </div>
 
         <div v-if="view === 'form'">
-          Form here: Name - Required Last name - Required Email - Required Phone
-          - Required day 1 time 1 time 2 day 2 time 2 time 2 message - optional
-          submit
+          <form class="space-y-6">
+            <!-- Personal details -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label class="mb-1 block text-sm font-medium">Name *</label>
+                <input
+                  type="text"
+                  required
+                  class="focus:ring-primary w-full rounded-lg border p-3 focus:ring-2 focus:outline-none" />
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium"
+                  >Last name *</label
+                >
+                <input
+                  type="text"
+                  required
+                  class="focus:ring-primary w-full rounded-lg border p-3 focus:ring-2 focus:outline-none" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label class="mb-1 block text-sm font-medium">Email *</label>
+                <input
+                  type="email"
+                  required
+                  class="focus:ring-primary w-full rounded-lg border p-3 focus:ring-2 focus:outline-none" />
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium">Phone *</label>
+                <input
+                  type="tel"
+                  required
+                  class="focus:ring-primary w-full rounded-lg border p-3 focus:ring-2 focus:outline-none" />
+              </div>
+            </div>
+
+            <!-- Availability -->
+            <div class="space-y-4">
+              <p class="text-sm font-medium">Preferred availability *</p>
+
+              <div>
+                <p class="mb-2 text-sm">Monday</p>
+                <div class="flex gap-4">
+                  <label class="flex items-center gap-2">
+                    <input type="radio" name="monday" required />
+                    <span>09:00 – 11:00</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="radio" name="monday" required />
+                    <span>14:00 – 16:00</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <p class="mb-2 text-sm">Friday</p>
+                <div class="flex gap-4">
+                  <label class="flex items-center gap-2">
+                    <input type="radio" name="friday" required />
+                    <span>10:00 – 12:00</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="radio" name="friday" required />
+                    <span>15:00 – 17:00</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <Button type="submit" class="mt-8 w-full">
+              Request callback
+            </Button>
+          </form>
         </div>
         <div
           v-else-if="view === 'success-contact'"

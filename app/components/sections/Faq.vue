@@ -2,7 +2,7 @@
   <section
     class="relative overflow-visible rounded-4xl bg-linear-to-b from-pink-50 to-violet-200 py-48">
     <div class="relative m-auto grid max-w-6xl grid-cols-2 items-start gap-12">
-      <div class="relative h-screen">
+      <div class="relative h-[1500px]">
         <div class="sticky top-48 left-0 flex flex-col">
           <div class="mb-12 flex flex-col">
             <h2 class="mb-3">{{ faq.title }}</h2>
@@ -10,7 +10,7 @@
               {{ faq.subTitle }}
             </p>
           </div>
-          <img src="/FAQs-bro.svg" class="mt-32" alt="" />
+          <img src="/FAQs-bro.svg" class="mt-32" alt="FAQ" />
         </div>
       </div>
 
