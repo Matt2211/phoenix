@@ -56,7 +56,7 @@
           <img
             :src="area.image"
             :alt="area.name"
-            class="m-auto h-80 w-80 object-cover transition-transform duration-500 group-hover:scale-105" />
+            class="m-auto h-50 w-50 object-cover transition-transform duration-500 group-hover:scale-105" />
 
           <div class="mt-6 flex flex-1 flex-col text-center">
             <div class="flex items-center justify-center">
@@ -79,7 +79,10 @@
       </p>
 
       <div class="max-md:col-span-2 md:ml-auto">
-        <Button class="w-full">{{ areas.ctaBtn }}</Button>
+        <Button class="w-full" @click="showContactForm = true">{{
+          areas.ctaBtn
+        }}</Button>
+        <Contact v-if="showContactForm" @close="showContactForm = false" />
       </div>
     </div>
   </section>
@@ -92,9 +95,15 @@ import 'swiper/css'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperInstance } from 'swiper/types'
 
+import areas from '~/content/areas'
+import { CircleArrowLeft, CircleArrowRight } from 'lucide-vue-next'
+import Contact from './Contact.vue'
+
 const modules = [Autoplay]
 const swiperInstance = ref<SwiperInstance | null>(null)
 const isHovered = ref(false)
+
+const showContactForm = ref(false)
 
 const onSwiper = (swiper: SwiperInstance) => {
   swiperInstance.value = swiper
@@ -140,7 +149,4 @@ const restartAutoplay = () => {
 }
 
 onMounted(() => restartAutoplay())
-
-import areas from '~/content/areas'
-import { CircleArrowLeft, CircleArrowRight } from 'lucide-vue-next'
 </script>

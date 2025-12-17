@@ -19,10 +19,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  typescript: {
-    includeWorkspace: true,
-  },
-
   app: {
     head: {
       titleTemplate: '%s | Lisa Marini CBT',
