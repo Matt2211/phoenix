@@ -2,16 +2,19 @@
   <Transition name="fade">
     <div
       v-if="isOpen"
-      class="fixed inset-0 z-999 flex items-center justify-center backdrop-blur-3xl">
+      class="fixed inset-0 z-999 flex items-center justify-center bg-[url(/ffflux.svg)] bg-cover bg-no-repeat backdrop-blur-3xl">
       <div
         ref="modalWrapper"
-        class="modal-wrapper border-primary relative w-full max-w-xl rounded-xl border bg-neutral-50/90 p-6 backdrop-blur-sm md:p-8">
+        class="modal-wrapper relative w-full max-w-xl rounded-4xl border border-white bg-white/70 p-6 backdrop-blur-sm md:p-8">
         <div
           v-if="view === 'form'"
           class="mb-12 flex items-baseline justify-between">
-          <h3 class="text-primary font-jet-brains-mono font-medium">
-            Book a callback
-          </h3>
+          <div class="flex flex-col">
+            <h3 class="text-primary font-jet-brains-mono font-medium">
+              Book a callback
+            </h3>
+            <p>Please fill the form and choose a slot that fits you best.</p>
+          </div>
           <button
             class="hover:text-secondary text-tertiary cursor-pointer transition"
             @click="closeModal">
@@ -63,61 +66,65 @@
 
             <!-- Availability -->
             <div class="space-y-4">
-              <p class="text-sm font-medium">Preferred availability *</p>
+              <h3 class="font-medium">Preferred availability</h3>
 
               <div>
-                <p class="mb-2 text-sm">Monday</p>
-                <div class="flex gap-4">
-                  <label class="flex cursor-pointer items-center gap-2">
-                    <input
-                      type="radio"
-                      name="monday"
-                      required
-                      class="peer absolute h-0 w-0 opacity-0" />
-                    <span
-                      class="border-tertiary rounded-md border px-3 py-1 transition-colors duration-200 peer-checked:border-violet-400 peer-checked:bg-violet-600/10 peer-checked:text-violet-400 max-md:w-full max-md:text-center"
-                      >09:00 - 11:00</span
-                    >
-                  </label>
-                  <label class="flex cursor-pointer items-center gap-2">
-                    <input
-                      type="radio"
-                      name="monday"
-                      required
-                      class="peer absolute h-0 w-0 opacity-0" />
-                    <span
-                      class="border-tertiary rounded-md border px-3 py-1 transition-colors duration-200 peer-checked:border-violet-400 peer-checked:bg-violet-600/10 peer-checked:text-violet-400 max-md:w-full max-md:text-center"
-                      >14:00 - 16:00</span
-                    >
-                  </label>
+                <div class="flex items-center justify-between gap-4">
+                  <p class="text-primary text-xl font-medium">Monday</p>
+                  <div class="flex items-center gap-4">
+                    <label class="flex cursor-pointer items-center gap-2">
+                      <input
+                        type="radio"
+                        name="monday"
+                        required
+                        class="peer absolute h-0 w-0 opacity-0" />
+                      <span
+                        class="border-tertiary rounded-md border px-3 py-2 transition-colors duration-200 peer-checked:border-violet-400 peer-checked:bg-violet-600/10 max-md:w-full max-md:text-center"
+                        >09:00 - 11:00</span
+                      >
+                    </label>
+                    <label class="flex cursor-pointer items-center gap-2">
+                      <input
+                        type="radio"
+                        name="monday"
+                        required
+                        class="peer absolute h-0 w-0 opacity-0" />
+                      <span
+                        class="border-tertiary rounded-md border px-3 py-2 transition-colors duration-200 peer-checked:border-violet-400 peer-checked:bg-violet-600/10 max-md:w-full max-md:text-center"
+                        >14:00 - 16:00</span
+                      >
+                    </label>
+                  </div>
                 </div>
               </div>
 
               <div>
-                <p class="mb-2 text-sm">Friday</p>
-                <div class="flex gap-4">
-                  <label class="flex cursor-pointer items-center gap-2">
-                    <input
-                      type="radio"
-                      name="friday"
-                      required
-                      class="peer absolute h-0 w-0 opacity-0" />
-                    <span
-                      class="border-tertiary rounded-md border px-3 py-1 transition-colors duration-200 peer-checked:border-violet-400 peer-checked:bg-violet-600/10 peer-checked:text-violet-400 max-md:w-full max-md:text-center"
-                      >09:00 - 11:00</span
-                    >
-                  </label>
-                  <label class="flex cursor-pointer items-center gap-2">
-                    <input
-                      type="radio"
-                      name="friday"
-                      required
-                      class="peer absolute h-0 w-0 opacity-0" />
-                    <span
-                      class="border-tertiary rounded-md border px-3 py-1 transition-colors duration-200 peer-checked:border-violet-400 peer-checked:bg-violet-600/10 peer-checked:text-violet-400 max-md:w-full max-md:text-center"
-                      >14:00 - 16:00</span
-                    >
-                  </label>
+                <div class="flex items-center justify-between gap-4">
+                  <p class="text-primary text-xl font-medium">Friday</p>
+                  <div class="flex items-center gap-4">
+                    <label class="flex cursor-pointer items-center gap-2">
+                      <input
+                        type="radio"
+                        name="monday"
+                        required
+                        class="peer absolute h-0 w-0 opacity-0" />
+                      <span
+                        class="border-tertiary rounded-md border px-3 py-2 transition-colors duration-200 peer-checked:border-violet-400 peer-checked:bg-violet-600/10 max-md:w-full max-md:text-center"
+                        >09:00 - 11:00</span
+                      >
+                    </label>
+                    <label class="flex cursor-pointer items-center gap-2">
+                      <input
+                        type="radio"
+                        name="monday"
+                        required
+                        class="peer absolute h-0 w-0 opacity-0" />
+                      <span
+                        class="border-tertiary rounded-md border px-3 py-2 transition-colors duration-200 peer-checked:border-violet-400 peer-checked:bg-violet-600/10 max-md:w-full max-md:text-center"
+                        >14:00 - 16:00</span
+                      >
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>

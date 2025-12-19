@@ -1,7 +1,7 @@
 <template>
-  <header class="fixed top-8 z-50 w-full">
+  <header class="fixed top-2 left-1/2 z-50 w-full -translate-x-1/2">
     <div
-      class="container m-auto flex items-center rounded-full bg-white/80 px-4 py-3 shadow backdrop-blur-xs">
+      class="container m-auto flex items-center rounded-full border border-white bg-white/70 p-2 backdrop-blur-sm">
       <!-- Logo / Brand -->
       <div class="flex-1 text-2xl font-bold">
         <a

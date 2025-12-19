@@ -1,29 +1,26 @@
 <template>
   <section
     class="relative overflow-visible rounded-t-4xl bg-linear-to-b from-pink-50 to-violet-200 py-48">
-    <div
-      class="relative m-auto grid max-w-6xl items-start gap-12 max-lg:p-4 lg:grid-cols-2">
-      <div class="relative lg:h-[1500px]">
-        <div class="top-48 left-0 flex flex-col lg:sticky">
-          <div class="mb-12 flex flex-col">
-            <h2 class="mb-3">{{ faq.title }}</h2>
-            <p class="lead">
-              {{ faq.subTitle }}
-            </p>
-          </div>
-          <img src="/FAQs-bro.svg" class="mt-12" alt="FAQ" />
-        </div>
+    <div class="m-auto grid max-w-6xl grid-cols-1 md:grid-cols-3">
+      <div class="col-span-1">
+        <h2 class="mb-3">{{ faq.title }}</h2>
+      </div>
+      <div class="col-span-1"></div>
+      <div class="col-span-1">
+        <p class="lead">
+          {{ faq.subTitle }}
+        </p>
       </div>
 
-      <div class="flex flex-col gap-6">
+      <div class="col-span-1 mt-32 space-y-4 md:col-span-3">
         <div
           v-for="(question, index) in faq.questions"
           :key="index"
-          class="border-primary flex flex-col border-b pb-6 last:border-0 last:pb-0">
+          @click="open[index] = !open[index]"
+          class="border-tertiary hover:bg-secondary flex cursor-pointer flex-col rounded-2xl border p-4">
           <div
             type="button"
-            class="text-secondary hover:text-primary flex cursor-pointer items-center justify-between text-xl"
-            @click="open[index] = !open[index]">
+            class="text-secondary hover:text-primary flex items-center justify-between text-xl">
             <h4>
               {{ question.question }}
             </h4>
@@ -37,10 +34,10 @@
           </div>
           <Transition name="accordion">
             <div v-if="open[index]" class="overflow-hidden">
-              <p class="my-4">
+              <p class="mt-4">
                 {{ question.answer }}
               </p>
-              <div v-if="question.hasEmergencyList">
+              <div v-if="question.hasEmergencyList" class="mt-8">
                 <h4 class="font-medium">Emergency & Support Contacts</h4>
                 <p>If you need help urgently:</p>
               </div>

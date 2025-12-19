@@ -1,5 +1,5 @@
 <template>
-  <section id="about" class="py-32" aria-labelledby="about-title">
+  <section id="about" class="mb-32" aria-labelledby="about-title">
     <div
       class="container m-auto flex items-center justify-center rounded-4xl bg-[url(/ffflux.svg)] bg-cover p-6 lg:p-12">
       <div
@@ -21,7 +21,7 @@
         </div>
 
         <div
-          class="col-span-4 row-span-8 aspect-square rounded-4xl bg-white/30 p-12 shadow-md backdrop-blur-xs">
+          class="col-span-4 row-span-8 aspect-square rounded-4xl border border-white bg-white/70 p-12 backdrop-blur-sm">
           <p class="text-xl">
             I hold a BSc in Psychology and an MSc in Neuroscience and
             Neuropsychological Rehabilitation. I began my career supporting

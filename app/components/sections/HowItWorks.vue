@@ -54,7 +54,7 @@
         <component
           v-if="icons[practice.icon as keyof typeof icons]"
           :is="icons[practice.icon as keyof typeof icons]"
-          class="text-quaternary mb-4" />
+          class="mb-4 h-10 w-10 rounded-xl border-white bg-violet-300/70 p-2 text-white backdrop-blur-sm" />
         <h4 class="text-tertiary mb-1 text-base font-semibold">
           {{ practice.name }}
         </h4>
