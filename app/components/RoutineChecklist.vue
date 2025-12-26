@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Pencil, Check, RotateCcw, X, Plus } from 'lucide-vue-next'
 type RoutineRow = { time: string; text: string }
 type CheckItem = { id: string; label: string }
 
@@ -59,18 +60,25 @@ function add() {
         </div>
 
         <div class="flex items-center gap-2">
-          <Button
-            class="rounded-xl border border-neutral-700 px-4 py-2 text-sm hover:bg-neutral-900"
+          <button
+            type="button"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/30 transition hover:bg-neutral-900/60"
+            :aria-label="isEdit ? 'Done' : 'Edit'"
             @click="isEdit = !isEdit">
-            {{ isEdit ? 'Done' : 'Edit' }}
-          </Button>
+            <component
+              :size="16"
+              :is="isEdit ? Check : Pencil"
+              class="text-neutral-200" />
+          </button>
 
-          <Button
-            class="rounded-xl border border-neutral-700 px-4 py-2 text-sm hover:bg-neutral-900"
-            @click="emit('resetSteps')"
-            title="Ripristina i default">
-            Reset
-          </Button>
+          <button
+            type="button"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/30 transition hover:bg-neutral-900/60"
+            aria-label="Reset"
+            title="Reset"
+            @click="emit('resetSteps')">
+            <RotateCcw :size="16" class="text-neutral-200" />
+          </button>
         </div>
       </div>
 
@@ -96,12 +104,14 @@ function add() {
                   )
                 " />
 
-              <Button
-                class="rounded-lg border border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-900"
-                @click="emit('removeStep', item.id)"
-                title="Elimina">
-                ✕
-              </Button>
+              <button
+                type="button"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-800 bg-rose-900/30 transition hover:bg-rose-900/60"
+                aria-label="Remove"
+                title="Remove"
+                @click="emit('removeStep', item.id)">
+                <X :size="16" class="text-rose-200" />
+              </button>
             </div>
           </template>
         </div>
@@ -115,11 +125,14 @@ function add() {
           class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
           placeholder="Nuovo step (es. Stretch 5 min)" />
 
-        <Button
-          class="rounded-xl bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-900"
+        <button
+          type="button"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-800 bg-emerald-900/30 transition hover:bg-emerald-900/60"
+          aria-label="Add step"
+          title="Add step"
           @click="add">
-          + Add step
-        </Button>
+          <Plus :size="16" class="text-emerald-400" />
+        </button>
       </div>
 
       <p class="mt-3 text-xs text-neutral-400">

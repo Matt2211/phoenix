@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Pencil, Check, X } from 'lucide-vue-next'
 type GroceryItem = {
   id: string
   name: string
@@ -62,9 +63,21 @@ function onGroceryPrice(id: string, raw: string) {
           <p class="text-sm text-neutral-400">{{ title }}</p>
         </div>
 
-        <Button @click="isMealEdit = !isMealEdit">
-          {{ isMealEdit ? 'Done' : 'Edit' }}
-        </Button>
+        <button
+          type="button"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-xl border transition"
+          :class="
+            isMealEdit
+              ? 'border-emerald-800 bg-emerald-900/30 hover:bg-emerald-900/60'
+              : 'border-neutral-800 bg-neutral-900/30 hover:bg-neutral-900/60'
+          "
+          :aria-label="isMealEdit ? 'Done' : 'Edit'"
+          @click="isMealEdit = !isMealEdit">
+          <component
+            :size="16"
+            :is="isMealEdit ? Check : Pencil"
+            :class="isMealEdit ? 'text-emerald-400' : 'text-neutral-200'" />
+        </button>
       </div>
 
       <div class="space-y-2">
@@ -84,7 +97,15 @@ function onGroceryPrice(id: string, raw: string) {
                 @input="
                   emit('update', i, ($event.target as HTMLInputElement).value)
                 " />
-              <Button @click="emit('remove', i)" title="Elimina"> ✕ </Button>
+
+              <button
+                type="button"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-800 bg-rose-900/30 transition hover:bg-rose-900/60"
+                aria-label="Remove"
+                title="Remove"
+                @click="emit('remove', i)">
+                <X :size="16" class="text-rose-200" />
+              </button>
             </div>
           </template>
         </div>
@@ -121,9 +142,21 @@ function onGroceryPrice(id: string, raw: string) {
             </p>
           </div>
 
-          <Button @click="isGroceryEdit = !isGroceryEdit">
-            {{ isGroceryEdit ? 'Done' : 'Edit' }}
-          </Button>
+          <button
+            type="button"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-xl border transition"
+            :class="
+              isGroceryEdit
+                ? 'border-emerald-800 bg-emerald-900/30 hover:bg-emerald-900/60'
+                : 'border-neutral-800 bg-neutral-900/30 hover:bg-neutral-900/60'
+            "
+            :aria-label="isGroceryEdit ? 'Done' : 'Edit'"
+            @click="isGroceryEdit = !isGroceryEdit">
+            <component
+              :size="16"
+              :is="isGroceryEdit ? Check : Pencil"
+              class="text-neutral-200" />
+          </button>
         </div>
       </div>
 

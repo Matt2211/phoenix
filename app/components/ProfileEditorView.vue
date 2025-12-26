@@ -277,17 +277,29 @@ function onSave() {
             </p>
           </div>
 
-          <button
-            type="button"
-            class="rounded-xl border px-3 py-2 text-sm font-semibold transition"
-            :class="
-              goalEnabled
-                ? 'border-neutral-300 bg-neutral-100/10 text-neutral-100'
-                : 'border-neutral-800 bg-neutral-900/30 text-neutral-300 hover:bg-neutral-900/60'
-            "
-            @click="goalEnabled = !goalEnabled">
-            {{ goalEnabled ? 'Yes' : 'No' }}
-          </button>
+          <div class="flex items-center gap-2">
+            <span
+              class="text-xs font-semibold"
+              :class="goalEnabled ? 'text-neutral-100' : 'text-neutral-500'">
+              {{ goalEnabled ? 'On' : 'Off' }}
+            </span>
+
+            <button
+              type="button"
+              role="switch"
+              :aria-checked="goalEnabled"
+              class="relative inline-flex h-6 w-12 items-center rounded-full border transition"
+              :class="
+                goalEnabled
+                  ? 'border-neutral-300 bg-neutral-100/10'
+                  : 'border-neutral-800 bg-neutral-900/30 hover:bg-neutral-900/60'
+              "
+              @click="goalEnabled = !goalEnabled">
+              <span
+                class="inline-block h-4 w-4 transform rounded-full bg-neutral-200 transition"
+                :class="goalEnabled ? 'translate-x-7' : 'translate-x-1'" />
+            </button>
+          </div>
         </div>
 
         <div v-if="goalEnabled" class="mt-3 grid gap-3 sm:grid-cols-2">

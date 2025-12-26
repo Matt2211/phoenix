@@ -56,10 +56,10 @@ function toneLabel(t?: Profile['quoteTone']) {
 
       <button
         type="button"
-        class="inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900/30 px-3 py-1.5 text-xs font-semibold text-neutral-200 hover:bg-neutral-900/60"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/30 transition hover:bg-neutral-900/60"
+        aria-label="Edit profile"
         @click="tab = 'profile'">
-        <Pencil class="h-4 w-4 text-neutral-300" />
-        Edit
+        <Pencil :size="16" class="text-neutral-200" />
       </button>
     </div>
 

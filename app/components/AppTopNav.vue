@@ -26,16 +26,16 @@ function go(next: Tab, select: () => void) {
       <div class="flex items-center justify-between">
         <!-- Logo placeholder -->
         <div
-          class="h-9 w-9 rounded-xl border border-neutral-800 bg-neutral-900/40"
+          class="h-10 w-10 rounded-xl border border-neutral-800 bg-neutral-900/40"
           aria-label="Logo" />
 
         <div class="flex items-center gap-2">
           <!-- Notifications (placeholder) -->
           <button
             type="button"
-            class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/30 transition hover:bg-neutral-900/60"
+            class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/30 transition hover:bg-neutral-900/60"
             aria-label="Notifications">
-            <Bell class="h-5 w-5 text-neutral-200" />
+            <Bell :size="16" class="text-neutral-200" />
           </button>
 
           <!-- Profile dropdown -->
@@ -43,12 +43,12 @@ function go(next: Tab, select: () => void) {
             <template #trigger="{ toggle, openMenu }">
               <button
                 type="button"
-                class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/30 transition hover:bg-neutral-900/60"
+                class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/30 transition hover:bg-neutral-900/60"
                 aria-label="Profile"
                 @click="toggle()"
                 @keydown.enter.prevent="openMenu()"
                 @keydown.space.prevent="openMenu()">
-                <User class="h-5 w-5 text-neutral-200" />
+                <User :size="16" class="text-neutral-200" />
               </button>
             </template>
 
