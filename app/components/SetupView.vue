@@ -57,6 +57,8 @@ const weeks = ref<string>(
   props.goal.weeks != null ? String(props.goal.weeks) : '',
 )
 
+const submitted = ref(false)
+
 watch(
   () => [props.profile, props.goal],
   () => {
@@ -103,6 +105,7 @@ const canSubmit = computed(() => {
 })
 
 function submit() {
+  submitted.value = true
   if (!canSubmit.value) return
 
   emit('complete', {
@@ -129,43 +132,41 @@ function submit() {
 
     <div class="grid gap-4 sm:grid-cols-2">
       <div class="sm:col-span-2">
-        <p class="text-xs tracking-wide text-neutral-400 uppercase">Name</p>
-        <input
+        <AppInput
           v-model="name"
-          class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
-          :class="name.trim() ? 'border-neutral-700' : 'border-rose-600'"
-          placeholder="e.g. Matt" />
+          label="Name"
+          placeholder="e.g. Matt"
+          :required="true"
+          :submitted="submitted" />
       </div>
 
       <div>
-        <p class="text-xs tracking-wide text-neutral-400 uppercase">Age</p>
-        <input
+        <AppInput
           v-model="age"
+          label="Age"
           type="number"
           inputmode="numeric"
-          class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
-          :class="
-            numOrNull(age) != null ? 'border-neutral-700' : 'border-rose-600'
-          "
-          placeholder="e.g. 30" />
+          placeholder="e.g. 30"
+          :required="true"
+          :submitted="submitted"
+          :validator="
+            (v) => (numOrNull(v) == null ? 'Enter a valid number' : null)
+          " />
       </div>
 
       <div>
-        <p class="text-xs tracking-wide text-neutral-400 uppercase">
-          Current weight (kg)
-        </p>
-        <input
+        <AppInput
           v-model="startWeight"
+          label="Current weight (kg)"
           type="number"
           step="0.1"
           inputmode="decimal"
-          class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
-          :class="
-            numOrNull(startWeight) != null
-              ? 'border-neutral-700'
-              : 'border-rose-600'
-          "
-          placeholder="e.g. 88.0" />
+          placeholder="e.g. 88.0"
+          :required="true"
+          :submitted="submitted"
+          :validator="
+            (v) => (numOrNull(v) == null ? 'Enter a valid number' : null)
+          " />
       </div>
 
       <div class="sm:col-span-2">
@@ -302,39 +303,38 @@ function submit() {
 
         <div v-if="goalEnabled" class="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
-            <p class="text-xs tracking-wide text-neutral-400 uppercase">
-              Target weight (kg)
-            </p>
-            <input
+            <AppInput
               v-model="targetWeight"
+              label="Target weight (kg)"
               type="number"
               step="0.1"
               inputmode="decimal"
-              class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
-              :class="
-                numOrNull(targetWeight) != null
-                  ? 'border-neutral-700'
-                  : 'border-rose-600'
-              "
-              placeholder="e.g. 76.0" />
+              placeholder="e.g. 76.0"
+              :required="true"
+              :submitted="submitted"
+              :validator="
+                (v) => (numOrNull(v) == null ? 'Enter a valid number' : null)
+              " />
           </div>
 
           <div>
-            <p class="text-xs tracking-wide text-neutral-400 uppercase">
-              Weeks
-            </p>
-            <input
+            <AppInput
               v-model="weeks"
+              label="Weeks"
               type="number"
               step="1"
               inputmode="numeric"
-              class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
-              :class="
-                numOrNull(weeks) != null && (numOrNull(weeks) as number) >= 1
-                  ? 'border-neutral-700'
-                  : 'border-rose-600'
-              "
-              placeholder="e.g. 12" />
+              placeholder="e.g. 12"
+              :required="true"
+              :submitted="submitted"
+              :validator="
+                (v) => {
+                  const n = numOrNull(v)
+                  if (n == null) return 'Enter a valid number'
+                  if (n < 1) return 'Must be at least 1'
+                  return null
+                }
+              " />
           </div>
         </div>
       </div>

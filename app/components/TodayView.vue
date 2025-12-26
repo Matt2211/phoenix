@@ -67,19 +67,24 @@ const nextRoutine = computed(() => {
   return first ? { ...first, isTomorrow: true } : null
 })
 
-function findTimeByKeyword(keyword: string) {
-  const k = keyword.toLowerCase()
-  const row = props.schedule.find((r) => r.text.toLowerCase().includes(k))
+function findTimeByKeywords(keywords: string[]) {
+  const ks = keywords.map((k) => k.toLowerCase())
+  const row = props.schedule.find((r) => {
+    const t = r.text.toLowerCase()
+    return ks.some((k) => t.includes(k))
+  })
   return row?.time ?? null
 }
 
 const timeHints = computed<Record<string, string>>(() => {
-  const breakfast = findTimeByKeyword('colazione') ?? '08:00'
-  const lunch = findTimeByKeyword('pranzo') ?? '14:15'
-  const dinner = findTimeByKeyword('cena') ?? '19:00-20:00'
+  const breakfast = findTimeByKeywords(['colazione', 'breakfast']) ?? '08:00'
+
+  const lunch = findTimeByKeywords(['pranzo', 'lunch']) ?? '14:15'
+
+  const dinner = findTimeByKeywords(['cena', 'dinner']) ?? '19:00-20:00'
+
   const snack =
-    findTimeByKeyword('snack proteico') ??
-    findTimeByKeyword('snack') ??
+    findTimeByKeywords(['snack proteico', 'protein snack', 'snack']) ??
     '16:30-17:30'
 
   return { breakfast, lunch, dinner, snack }
@@ -100,6 +105,13 @@ const energyOptions = [
   { level: 4, Icon: BatteryFull, label: 'Great' },
 ] as const
 
+function energyColor(level: number) {
+  if (level === 1) return 'text-red-400'
+  if (level === 2) return 'text-orange-400'
+  if (level === 3) return 'text-yellow-300'
+  return 'text-emerald-400'
+}
+
 function selectEnergy(level: number) {
   emit('setEnergy', props.energy === level ? null : level)
 }
@@ -114,7 +126,7 @@ const glassIndexes = computed(() =>
     <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
       <div class="mb-3">
         <h2 class="text-lg font-semibold text-neutral-100">Today</h2>
-        <p class="text-sm text-neutral-400">Data: {{ today }}</p>
+        <p class="text-sm text-neutral-400">Date: {{ today }}</p>
       </div>
 
       <!-- Next routine block -->
@@ -145,7 +157,7 @@ const glassIndexes = computed(() =>
         <!-- Weight -->
         <div>
           <p class="text-xs tracking-wide text-neutral-400 uppercase">
-            Peso (kg)
+            Weight (kg)
           </p>
           <div class="mt-2 flex items-center gap-2">
             <input
@@ -154,7 +166,7 @@ const glassIndexes = computed(() =>
               inputmode="decimal"
               class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
               :value="props.weight ?? ''"
-              placeholder="es. 88.0"
+              placeholder="e.g. 88.0"
               @input="
                 emit('updateWeight', ($event.target as HTMLInputElement).value)
               " />
@@ -173,7 +185,7 @@ const glassIndexes = computed(() =>
               inputmode="decimal"
               class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
               :value="props.sleepHours ?? ''"
-              placeholder="es. 6.5"
+              placeholder="e.g. 6.5"
               @input="
                 emit(
                   'updateSleepHours',
@@ -204,13 +216,13 @@ const glassIndexes = computed(() =>
                 class="h-5 w-5"
                 :class="
                   props.energy === opt.level
-                    ? 'text-neutral-100'
+                    ? energyColor(opt.level)
                     : 'text-neutral-400'
                 " />
             </button>
           </div>
           <p class="mt-2 text-xs text-neutral-400">
-            Clicca per selezionare (clicca di nuovo per togliere).
+            Click to select (click again to clear).
           </p>
         </div>
 
@@ -290,7 +302,7 @@ const glassIndexes = computed(() =>
         </div>
 
         <p v-else class="mt-2 text-sm font-semibold text-neutral-100">
-          Tutto fatto ✅
+          All done ✅
         </p>
       </div>
 

@@ -104,7 +104,7 @@ html {
    =================================== */
 @layer components {
   h1 {
-    @apply font-jet-brains-mono text-6xl font-medium md:text-[100px] lg:text-[190px];
+    @apply font-jet-brains-mono font-medium;
     line-height: 120%;
     color: var(--color-text-primary-inverted);
   }
