@@ -84,12 +84,12 @@ function onSetEnergy(level: number | null) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-950 text-slate-100">
-    <div class="mx-auto max-w-5xl p-4 sm:p-6">
+  <div class="min-h-screen bg-neutral-950 text-neutral-100">
+    <div class="mx-auto max-w-5xl p-4 pb-24 sm:p-6 sm:pb-24">
       <ClientOnly>
         <template #fallback>
           <div
-            class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 text-slate-300">
+            class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4 text-neutral-300">
             Loading…
           </div>
         </template>
@@ -102,88 +102,38 @@ function onSetEnergy(level: number | null) {
 
         <template v-else>
           <header class="just mb-6 flex flex-col gap-3">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col">
               <div>
                 <h1 class="text-2xl font-semibold">
                   Planner di {{ data.profile.name || 'Matt' }}
                 </h1>
-                <p class="text-slate-300">
+                <p class="text-neutral-300">
                   Oggi:
-                  <span class="font-medium text-slate-100">{{ today }}</span>
+                  <span class="font-medium text-neutral-100">{{ today }}</span>
                 </p>
-              </div>
-
-              <div class="flex flex-wrap gap-2">
-                <Button
-                  :class="
-                    tab === 'today'
-                      ? 'bg-slate-100 text-slate-900'
-                      : 'hover:bg-slate-900'
-                  "
-                  @click="tab = 'today'">
-                  Today
-                </Button>
-
-                <Button
-                  :class="
-                    tab === 'progress'
-                      ? 'bg-slate-100 text-slate-900'
-                      : 'hover:bg-slate-900'
-                  "
-                  @click="tab = 'progress'">
-                  Progress
-                </Button>
-
-                <Button
-                  :class="
-                    tab === 'routine'
-                      ? 'bg-slate-100 text-slate-900'
-                      : 'hover:bg-slate-900'
-                  "
-                  @click="tab = 'routine'">
-                  Routine
-                </Button>
-
-                <Button
-                  :class="
-                    tab === 'meals'
-                      ? 'bg-slate-100 text-slate-900'
-                      : 'hover:bg-slate-900'
-                  "
-                  @click="tab = 'meals'">
-                  Meals
-                </Button>
-
-                <Button
-                  :class="
-                    tab === 'backup'
-                      ? 'bg-slate-100 text-slate-900'
-                      : 'hover:bg-slate-900'
-                  "
-                  @click="tab = 'backup'">
-                  Backup
-                </Button>
               </div>
             </div>
 
             <div
-              class="mt-3 w-full rounded-2xl border border-slate-800 bg-slate-900/30 p-3">
+              class="mt-3 w-full rounded-2xl border border-neutral-800 bg-neutral-900/30 p-3">
               <div
-                class="mb-2 flex items-center justify-between text-xs text-slate-400">
+                class="mb-2 flex items-center justify-between text-xs text-neutral-400">
                 <span>Daily progress</span>
-                <span class="font-semibold text-slate-200">
+                <span class="font-semibold text-neutral-200">
                   {{ doneSteps }}/{{ totalSteps }} • {{ percent }}%
                 </span>
               </div>
 
-              <div class="h-3 w-full overflow-hidden rounded-full bg-slate-800">
+              <div
+                class="h-3 w-full overflow-hidden rounded-full bg-neutral-800">
                 <div
-                  class="h-full rounded-full bg-linear-to-r from-slate-400 via-sky-400 to-violet-400 transition-all duration-500"
+                  class="h-full rounded-full bg-linear-to-r from-neutral-400 via-sky-400 to-violet-400 transition-all duration-500"
                   :style="{ width: percent + '%' }" />
               </div>
 
-              <p class="mt-2 text-xs text-slate-400">
-                Next: <span class="text-slate-200">{{ nextHeaderAction }}</span>
+              <p class="mt-2 text-xs text-neutral-400">
+                Next:
+                <span class="text-neutral-200">{{ nextHeaderAction }}</span>
               </p>
             </div>
           </header>
@@ -237,6 +187,7 @@ function onSetEnergy(level: number | null) {
             v-else
             :exportJson="exportJson"
             :importJson="importJson" />
+          <AppTabNav v-model="tab" />
         </template>
       </ClientOnly>
     </div>

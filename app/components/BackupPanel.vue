@@ -42,9 +42,9 @@ function doImport() {
 </script>
 
 <template>
-  <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-    <h2 class="mb-2 text-lg font-semibold text-slate-100">Backup</h2>
-    <p class="text-sm text-slate-400">
+  <section class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
+    <h2 class="mb-2 text-lg font-semibold text-neutral-100">Backup</h2>
+    <p class="text-sm text-neutral-400">
       Exporta/Importa JSON per non perdere mai i dati.
     </p>
 
@@ -58,11 +58,11 @@ function doImport() {
       <Button @click="downloadJson"> Download .json </Button>
     </div>
 
-    <p v-if="status" class="mt-3 text-sm text-slate-300">{{ status }}</p>
+    <p v-if="status" class="mt-3 text-sm text-neutral-300">{{ status }}</p>
 
     <textarea
       v-model="text"
-      class="mt-3 h-64 w-full rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-200"
+      class="mt-3 h-64 w-full rounded-xl border border-neutral-800 bg-neutral-950/40 p-3 text-xs text-neutral-200"
       placeholder="Clicca Export per ottenere il JSON. Incolla qui per Import." />
   </section>
 </template>

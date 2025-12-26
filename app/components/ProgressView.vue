@@ -146,8 +146,8 @@ const tableRows = computed(() => {
     <div
       class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 class="text-lg font-semibold text-slate-100">Progress</h2>
-        <p class="text-sm text-slate-400">
+        <h2 class="text-lg font-semibold text-neutral-100">Progress</h2>
+        <p class="text-sm text-neutral-400">
           4 grafici sempre visibili: Weight, Sleep, Energy, Water
         </p>
       </div>
@@ -155,28 +155,36 @@ const tableRows = computed(() => {
       <div class="flex flex-wrap gap-2">
         <Button
           :class="
-            range === 14 ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-900'
+            range === 14
+              ? 'bg-neutral-100 text-neutral-900'
+              : 'hover:bg-neutral-900'
           "
           @click="range = 14">
           14d
         </Button>
         <Button
           :class="
-            range === 30 ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-900'
+            range === 30
+              ? 'bg-neutral-100 text-neutral-900'
+              : 'hover:bg-neutral-900'
           "
           @click="range = 30">
           30d
         </Button>
         <Button
           :class="
-            range === 90 ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-900'
+            range === 90
+              ? 'bg-neutral-100 text-neutral-900'
+              : 'hover:bg-neutral-900'
           "
           @click="range = 90">
           90d
         </Button>
         <Button
           :class="
-            range === 0 ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-900'
+            range === 0
+              ? 'bg-neutral-100 text-neutral-900'
+              : 'hover:bg-neutral-900'
           "
           @click="range = 0">
           All
@@ -187,16 +195,18 @@ const tableRows = computed(() => {
     <!-- Charts grid -->
     <div class="grid gap-3 sm:grid-cols-2">
       <!-- Weight -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
         <div class="mb-2 flex items-end justify-between">
           <div>
-            <p class="text-xs tracking-wide text-slate-400 uppercase">Weight</p>
-            <p class="mt-1 text-2xl font-semibold text-slate-100">
+            <p class="text-xs tracking-wide text-neutral-400 uppercase">
+              Weight
+            </p>
+            <p class="mt-1 text-2xl font-semibold text-neutral-100">
               {{ fmt('weight', latest.weight) }}
-              <span class="text-sm text-slate-400">kg</span>
+              <span class="text-sm text-neutral-400">kg</span>
             </p>
           </div>
-          <p class="text-xs text-slate-400" v-if="rows.length">
+          <p class="text-xs text-neutral-400" v-if="rows.length">
             {{ rows.length }} entries
           </p>
         </div>
@@ -207,17 +217,19 @@ const tableRows = computed(() => {
             :values="series('weight')"
             label="Weight (kg)" />
         </div>
-        <p v-else class="text-sm text-slate-400">Nessun dato ancora.</p>
+        <p v-else class="text-sm text-neutral-400">Nessun dato ancora.</p>
       </div>
 
       <!-- Sleep -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
         <div class="mb-2 flex items-end justify-between">
           <div>
-            <p class="text-xs tracking-wide text-slate-400 uppercase">Sleep</p>
-            <p class="mt-1 text-2xl font-semibold text-slate-100">
+            <p class="text-xs tracking-wide text-neutral-400 uppercase">
+              Sleep
+            </p>
+            <p class="mt-1 text-2xl font-semibold text-neutral-100">
               {{ fmt('sleepHours', latest.sleepHours) }}
-              <span class="text-sm text-slate-400">h</span>
+              <span class="text-sm text-neutral-400">h</span>
             </p>
           </div>
         </div>
@@ -231,17 +243,19 @@ const tableRows = computed(() => {
             :yMax="METRIC.sleepHours.yMax"
             :stepSize="METRIC.sleepHours.stepSize" />
         </div>
-        <p v-else class="text-sm text-slate-400">Nessun dato ancora.</p>
+        <p v-else class="text-sm text-neutral-400">Nessun dato ancora.</p>
       </div>
 
       <!-- Energy -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
         <div class="mb-2 flex items-end justify-between">
           <div>
-            <p class="text-xs tracking-wide text-slate-400 uppercase">Energy</p>
-            <p class="mt-1 text-2xl font-semibold text-slate-100">
+            <p class="text-xs tracking-wide text-neutral-400 uppercase">
+              Energy
+            </p>
+            <p class="mt-1 text-2xl font-semibold text-neutral-100">
               {{ fmt('energy', latest.energy) }}
-              <span class="text-sm text-slate-400">/4</span>
+              <span class="text-sm text-neutral-400">/4</span>
             </p>
           </div>
         </div>
@@ -255,17 +269,19 @@ const tableRows = computed(() => {
             :yMax="METRIC.energy.yMax"
             :stepSize="METRIC.energy.stepSize" />
         </div>
-        <p v-else class="text-sm text-slate-400">Nessun dato ancora.</p>
+        <p v-else class="text-sm text-neutral-400">Nessun dato ancora.</p>
       </div>
 
       <!-- Water -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
         <div class="mb-2 flex items-end justify-between">
           <div>
-            <p class="text-xs tracking-wide text-slate-400 uppercase">Water</p>
-            <p class="mt-1 text-2xl font-semibold text-slate-100">
+            <p class="text-xs tracking-wide text-neutral-400 uppercase">
+              Water
+            </p>
+            <p class="mt-1 text-2xl font-semibold text-neutral-100">
               {{ fmt('waterGlasses', latest.waterGlasses) }}
-              <span class="text-sm text-slate-400">glasses</span>
+              <span class="text-sm text-neutral-400">glasses</span>
             </p>
           </div>
         </div>
@@ -279,15 +295,15 @@ const tableRows = computed(() => {
             :yMax="METRIC.waterGlasses.yMax"
             :stepSize="METRIC.waterGlasses.stepSize" />
         </div>
-        <p v-else class="text-sm text-slate-400">Nessun dato ancora.</p>
+        <p v-else class="text-sm text-neutral-400">Nessun dato ancora.</p>
       </div>
     </div>
 
     <!-- Table -->
-    <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
       <div class="mb-3 flex items-center justify-between">
-        <h3 class="text-sm font-semibold text-slate-100">Table</h3>
-        <p class="text-xs text-slate-400">Newest first</p>
+        <h3 class="text-sm font-semibold text-neutral-100">Table</h3>
+        <p class="text-xs text-neutral-400">Newest first</p>
       </div>
 
       <div class="overflow-x-auto">
@@ -295,23 +311,23 @@ const tableRows = computed(() => {
           <thead>
             <tr>
               <th
-                class="border-b border-slate-800 px-3 py-2 text-left text-xs text-slate-400">
+                class="border-b border-neutral-800 px-3 py-2 text-left text-xs text-neutral-400">
                 Date
               </th>
               <th
-                class="border-b border-slate-800 px-3 py-2 text-right text-xs text-slate-400">
+                class="border-b border-neutral-800 px-3 py-2 text-right text-xs text-neutral-400">
                 Weight (kg)
               </th>
               <th
-                class="border-b border-slate-800 px-3 py-2 text-right text-xs text-slate-400">
+                class="border-b border-neutral-800 px-3 py-2 text-right text-xs text-neutral-400">
                 Sleep (h)
               </th>
               <th
-                class="border-b border-slate-800 px-3 py-2 text-right text-xs text-slate-400">
+                class="border-b border-neutral-800 px-3 py-2 text-right text-xs text-neutral-400">
                 Energy
               </th>
               <th
-                class="border-b border-slate-800 px-3 py-2 text-right text-xs text-slate-400">
+                class="border-b border-neutral-800 px-3 py-2 text-right text-xs text-neutral-400">
                 Water
               </th>
             </tr>
@@ -319,23 +335,23 @@ const tableRows = computed(() => {
           <tbody>
             <tr v-for="r in tableRows" :key="r.date">
               <td
-                class="border-b border-slate-800 px-3 py-2 text-sm text-slate-200">
+                class="border-b border-neutral-800 px-3 py-2 text-sm text-neutral-200">
                 {{ r.date }}
               </td>
               <td
-                class="border-b border-slate-800 px-3 py-2 text-right text-sm text-slate-200">
+                class="border-b border-neutral-800 px-3 py-2 text-right text-sm text-neutral-200">
                 {{ r.weight == null ? '—' : r.weight.toFixed(1) }}
               </td>
               <td
-                class="border-b border-slate-800 px-3 py-2 text-right text-sm text-slate-200">
+                class="border-b border-neutral-800 px-3 py-2 text-right text-sm text-neutral-200">
                 {{ r.sleepHours == null ? '—' : r.sleepHours.toFixed(1) }}
               </td>
               <td
-                class="border-b border-slate-800 px-3 py-2 text-right text-sm text-slate-200">
+                class="border-b border-neutral-800 px-3 py-2 text-right text-sm text-neutral-200">
                 {{ r.energy == null ? '—' : String(Math.round(r.energy)) }}
               </td>
               <td
-                class="border-b border-slate-800 px-3 py-2 text-right text-sm text-slate-200">
+                class="border-b border-neutral-800 px-3 py-2 text-right text-sm text-neutral-200">
                 {{
                   r.waterGlasses == null
                     ? '—'

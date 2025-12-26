@@ -30,7 +30,7 @@ const baseClasses =
   'inline-flex items-center justify-center font-jet-brains-mono uppercase transition-opacity hover:opacity-90 rounded-xl'
 
 const variants = {
-  solid: 'bg-cyan-500 text-slate-800 px-6 py-2',
+  solid: 'bg-emerald-400 text-neutral-800 px-6 py-2',
   outline: 'border border-primary text-primary px-6 py-2',
   basic: 'text-primary',
 }

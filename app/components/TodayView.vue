@@ -94,9 +94,9 @@ function hintForItem(id: string) {
 }
 
 const energyOptions = [
-  { level: 1, Icon: BatteryLow, label: 'Low' },
-  { level: 2, Icon: BatteryMedium, label: 'Medium' },
-  { level: 3, Icon: Battery, label: 'Good' },
+  { level: 1, Icon: Battery, label: 'Low' },
+  { level: 2, Icon: BatteryLow, label: 'Medium' },
+  { level: 3, Icon: BatteryMedium, label: 'Good' },
   { level: 4, Icon: BatteryFull, label: 'Great' },
 ] as const
 
@@ -111,32 +111,32 @@ const glassIndexes = computed(() =>
 
 <template>
   <section class="grid gap-4">
-    <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
       <div class="mb-3">
-        <h2 class="text-lg font-semibold text-slate-100">Today</h2>
-        <p class="text-sm text-slate-400">Data: {{ today }}</p>
+        <h2 class="text-lg font-semibold text-neutral-100">Today</h2>
+        <p class="text-sm text-neutral-400">Data: {{ today }}</p>
       </div>
 
       <!-- Next routine block -->
       <div
         v-if="nextRoutine"
-        class="mb-4 rounded-lg border border-slate-800 bg-slate-950/30 p-3">
+        class="mb-4 rounded-lg border border-neutral-800 bg-neutral-950/30 p-3">
         <div class="flex items-center justify-between">
-          <p class="text-xs tracking-wide text-slate-400 uppercase">
+          <p class="text-xs tracking-wide text-neutral-400 uppercase">
             Next routine block
           </p>
           <span
             v-if="nextRoutine.isTomorrow"
-            class="text-[11px] font-semibold text-slate-300">
+            class="text-[11px] font-semibold text-neutral-300">
             tomorrow
           </span>
         </div>
 
         <div class="mt-2">
-          <p class="text-sm font-semibold text-slate-100">
+          <p class="text-sm font-semibold text-neutral-100">
             {{ nextRoutine.time }}
           </p>
-          <p class="text-sm text-slate-300">{{ nextRoutine.text }}</p>
+          <p class="text-sm text-neutral-300">{{ nextRoutine.text }}</p>
         </div>
       </div>
 
@@ -144,7 +144,7 @@ const glassIndexes = computed(() =>
       <div class="grid gap-4 sm:grid-cols-2">
         <!-- Weight -->
         <div>
-          <p class="text-xs tracking-wide text-slate-400 uppercase">
+          <p class="text-xs tracking-wide text-neutral-400 uppercase">
             Peso (kg)
           </p>
           <div class="mt-2 flex items-center gap-2">
@@ -152,7 +152,7 @@ const glassIndexes = computed(() =>
               type="number"
               step="0.1"
               inputmode="decimal"
-              class="w-full rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+              class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
               :value="props.weight ?? ''"
               placeholder="es. 88.0"
               @input="
@@ -163,7 +163,7 @@ const glassIndexes = computed(() =>
 
         <!-- Sleep -->
         <div>
-          <p class="text-xs tracking-wide text-slate-400 uppercase">
+          <p class="text-xs tracking-wide text-neutral-400 uppercase">
             Sleep (hours)
           </p>
           <div class="mt-2 flex items-center gap-2">
@@ -171,7 +171,7 @@ const glassIndexes = computed(() =>
               type="number"
               step="0.1"
               inputmode="decimal"
-              class="w-full rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+              class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
               :value="props.sleepHours ?? ''"
               placeholder="es. 6.5"
               @input="
@@ -185,17 +185,17 @@ const glassIndexes = computed(() =>
 
         <!-- Energy -->
         <div>
-          <p class="text-xs tracking-wide text-slate-400 uppercase">Energy</p>
+          <p class="text-xs tracking-wide text-neutral-400 uppercase">Energy</p>
           <div class="mt-2 flex items-center gap-2">
             <button
               v-for="opt in energyOptions"
               :key="opt.level"
               type="button"
-              class="rounded-lg border px-2 py-2 transition"
+              class="cursor-pointer rounded-lg border px-2 py-2 transition"
               :class="
                 props.energy === opt.level
-                  ? 'border-slate-400 bg-slate-100/10'
-                  : 'border-slate-700 bg-slate-950/40 hover:bg-slate-900/40'
+                  ? 'border-neutral-400 bg-neutral-100/10'
+                  : 'border-neutral-700 bg-neutral-950/40 hover:bg-neutral-900/40'
               "
               :title="opt.label"
               @click="selectEnergy(opt.level)">
@@ -204,12 +204,12 @@ const glassIndexes = computed(() =>
                 class="h-5 w-5"
                 :class="
                   props.energy === opt.level
-                    ? 'text-slate-100'
-                    : 'text-slate-400'
+                    ? 'text-neutral-100'
+                    : 'text-neutral-400'
                 " />
             </button>
           </div>
-          <p class="mt-2 text-xs text-slate-400">
+          <p class="mt-2 text-xs text-neutral-400">
             Clicca per selezionare (clicca di nuovo per togliere).
           </p>
         </div>
@@ -217,8 +217,10 @@ const glassIndexes = computed(() =>
         <!-- Water -->
         <div>
           <div class="flex items-end justify-between">
-            <p class="text-xs tracking-wide text-slate-400 uppercase">Water</p>
-            <p class="text-xs font-semibold text-slate-200">
+            <p class="text-xs tracking-wide text-neutral-400 uppercase">
+              Water
+            </p>
+            <p class="text-xs font-semibold text-neutral-200">
               {{ props.waterGlasses }}/{{ props.waterTarget }}
             </p>
           </div>
@@ -228,36 +230,37 @@ const glassIndexes = computed(() =>
               v-for="i in glassIndexes"
               :key="i"
               type="button"
-              class="rounded-lg border px-2 py-2 transition"
+              class="cursor-pointer rounded-lg border px-2 py-2 transition"
               :class="
                 i < props.waterGlasses
-                  ? 'border-slate-400 bg-slate-100/10'
-                  : 'border-slate-700 bg-slate-950/40 hover:bg-slate-900/40'
+                  ? 'border-neutral-400 bg-neutral-100/10'
+                  : 'border-neutral-700 bg-neutral-950/40 hover:bg-neutral-900/40'
               "
               :title="`Glass ${i + 1}`"
               @click="emit('toggleWaterGlass', i)">
               <GlassWater
                 class="h-5 w-5"
                 :class="
-                  i < props.waterGlasses ? 'text-sky-300' : 'text-slate-600'
+                  i < props.waterGlasses ? 'text-sky-300' : 'text-neutral-600'
                 " />
             </button>
           </div>
 
-          <p class="mt-2 text-xs text-slate-400">Target: 3.5L (7×500ml).</p>
+          <p class="mt-2 text-xs text-neutral-400">Target: 3.5L (7×500ml).</p>
         </div>
       </div>
 
       <!-- Next action -->
-      <div class="mt-4 rounded-lg border border-slate-800 bg-slate-950/30 p-3">
+      <div
+        class="mt-4 rounded-lg border border-neutral-800 bg-neutral-950/30 p-3">
         <div class="flex items-center justify-between gap-3">
-          <p class="text-xs tracking-wide text-slate-400 uppercase">
+          <p class="text-xs tracking-wide text-neutral-400 uppercase">
             Next action
           </p>
 
           <button
             type="button"
-            class="text-xs font-semibold text-slate-200 underline underline-offset-4 hover:opacity-80"
+            class="text-xs font-semibold text-emerald-400 underline-offset-4 hover:opacity-80"
             @click="showAll = !showAll">
             {{ showAll ? 'Hide' : 'View all' }}
           </button>
@@ -267,12 +270,12 @@ const glassIndexes = computed(() =>
           v-if="nextItem"
           class="mt-2 flex items-center justify-between gap-3">
           <div class="flex items-center gap-2">
-            <p class="text-sm font-semibold text-slate-100">
+            <p class="text-sm font-semibold text-neutral-100">
               {{ nextItem.label }}
             </p>
             <span
               v-if="hintForItem(nextItem.id)"
-              class="rounded-full border border-slate-700 bg-slate-950/40 px-2 py-0.5 text-[11px] font-semibold text-slate-300">
+              class="rounded-full border border-neutral-700 bg-neutral-950/40 px-2 py-0.5 text-[11px] font-semibold text-neutral-300">
               {{ hintForItem(nextItem.id) }}
             </span>
           </div>
@@ -281,12 +284,12 @@ const glassIndexes = computed(() =>
           <input
             :key="nextItem.id"
             type="checkbox"
-            class="h-5 w-5 accent-slate-100"
+            class="h-5 w-5 accent-neutral-100"
             :checked="!!props.checkedMap[nextItem.id]"
             @change="toggleNext" />
         </div>
 
-        <p v-else class="mt-2 text-sm font-semibold text-slate-100">
+        <p v-else class="mt-2 text-sm font-semibold text-neutral-100">
           Tutto fatto ✅
         </p>
       </div>
@@ -294,26 +297,28 @@ const glassIndexes = computed(() =>
       <!-- All steps -->
       <div
         v-if="showAll"
-        class="mt-3 rounded-lg border border-slate-800 bg-slate-950/30 p-3">
-        <p class="text-xs tracking-wide text-slate-400 uppercase">All steps</p>
+        class="mt-3 rounded-lg border border-neutral-800 bg-neutral-950/30 p-3">
+        <p class="text-xs tracking-wide text-neutral-400 uppercase">
+          All steps
+        </p>
 
         <div class="mt-2 space-y-2">
           <label
             v-for="item in items"
             :key="item.id"
-            class="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+            class="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-neutral-800 bg-neutral-950/40 p-3">
             <div class="flex items-center gap-2">
-              <span class="text-sm text-slate-200">{{ item.label }}</span>
+              <span class="text-sm text-neutral-200">{{ item.label }}</span>
               <span
                 v-if="hintForItem(item.id)"
-                class="rounded-full border border-slate-700 bg-slate-950/40 px-2 py-0.5 text-[11px] font-semibold text-slate-300">
+                class="rounded-full border border-neutral-700 bg-neutral-950/40 px-2 py-0.5 text-[11px] font-semibold text-neutral-300">
                 {{ hintForItem(item.id) }}
               </span>
             </div>
 
             <input
               type="checkbox"
-              class="h-5 w-5 accent-slate-100"
+              class="h-5 w-5 accent-neutral-100"
               :checked="!!checkedMap[item.id]"
               @change="emit('toggle', item.id)" />
           </label>

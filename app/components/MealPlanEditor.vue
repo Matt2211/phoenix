@@ -54,11 +54,12 @@ function onGroceryPrice(id: string, raw: string) {
 <template>
   <div class="grid gap-4">
     <!-- ===================== Meal Plan ===================== -->
-    <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+    <section
+      class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
       <div class="mb-3 flex items-center justify-between gap-3">
         <div>
-          <h2 class="text-lg font-semibold text-slate-100">Meal Plan</h2>
-          <p class="text-sm text-slate-400">{{ title }}</p>
+          <h2 class="text-lg font-semibold text-neutral-100">Meal Plan</h2>
+          <p class="text-sm text-neutral-400">{{ title }}</p>
         </div>
 
         <Button @click="isMealEdit = !isMealEdit">
@@ -70,15 +71,15 @@ function onGroceryPrice(id: string, raw: string) {
         <div
           v-for="(x, i) in items"
           :key="i"
-          class="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+          class="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
           <template v-if="!isMealEdit">
-            <div class="text-sm text-slate-200">{{ x }}</div>
+            <div class="text-sm text-neutral-200">{{ x }}</div>
           </template>
 
           <template v-else>
             <div class="flex gap-2">
               <input
-                class="w-full rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+                class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
                 :value="x"
                 @input="
                   emit('update', i, ($event.target as HTMLInputElement).value)
@@ -91,7 +92,7 @@ function onGroceryPrice(id: string, raw: string) {
 
       <div v-if="isMealEdit" class="mt-3">
         <Button
-          class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900"
+          class="rounded-xl bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-900"
           @click="emit('add')">
           + Aggiungi riga
         </Button>
@@ -99,13 +100,14 @@ function onGroceryPrice(id: string, raw: string) {
     </section>
 
     <!-- ===================== Grocery ===================== -->
-    <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+    <section
+      class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
       <div class="mb-3 flex items-center justify-between gap-3">
         <div>
-          <h3 class="text-base font-semibold text-slate-100">
+          <h3 class="text-base font-semibold text-neutral-100">
             Lista della spesa (UK)
           </h3>
-          <p class="text-sm text-slate-400">
+          <p class="text-sm text-neutral-400">
             Prezzi indicativi: modificali con i tuoi prezzi reali. Totale
             calcolato automaticamente.
           </p>
@@ -113,8 +115,8 @@ function onGroceryPrice(id: string, raw: string) {
 
         <div class="flex items-center gap-3">
           <div class="text-right">
-            <p class="text-xs text-slate-400">Totale stimato</p>
-            <p class="text-lg font-semibold text-slate-100">
+            <p class="text-xs text-neutral-400">Totale stimato</p>
+            <p class="text-lg font-semibold text-neutral-100">
               £{{ groceryTotal.toFixed(2) }}
             </p>
           </div>
@@ -129,19 +131,19 @@ function onGroceryPrice(id: string, raw: string) {
         <div
           v-for="row in props.grocery"
           :key="row.id"
-          class="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+          class="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
           <template v-if="!isGroceryEdit">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <div class="text-sm font-semibold text-slate-200">
+                <div class="text-sm font-semibold text-neutral-200">
                   {{ row.name }}
                 </div>
-                <div v-if="row.qty" class="text-xs text-slate-400">
+                <div v-if="row.qty" class="text-xs text-neutral-400">
                   {{ row.qty }}
                 </div>
               </div>
 
-              <div class="text-sm font-semibold text-slate-200">
+              <div class="text-sm font-semibold text-neutral-200">
                 <template v-if="row.price != null">
                   £{{ row.price.toFixed(2) }}
                 </template>
@@ -154,11 +156,11 @@ function onGroceryPrice(id: string, raw: string) {
             <div class="grid gap-2 sm:grid-cols-12">
               <div class="sm:col-span-6">
                 <p
-                  class="mb-1 text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
+                  class="mb-1 text-[11px] font-semibold tracking-wide text-neutral-500 uppercase">
                   Item
                 </p>
                 <input
-                  class="w-full rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+                  class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
                   :value="row.name"
                   @input="
                     onGroceryName(
@@ -170,11 +172,11 @@ function onGroceryPrice(id: string, raw: string) {
 
               <div class="sm:col-span-4">
                 <p
-                  class="mb-1 text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
+                  class="mb-1 text-[11px] font-semibold tracking-wide text-neutral-500 uppercase">
                   Qty / note
                 </p>
                 <input
-                  class="w-full rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+                  class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
                   :value="row.qty"
                   placeholder="es. 2 packs / 7 porzioni"
                   @input="
@@ -187,14 +189,14 @@ function onGroceryPrice(id: string, raw: string) {
 
               <div class="sm:col-span-2">
                 <p
-                  class="mb-1 text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
+                  class="mb-1 text-[11px] font-semibold tracking-wide text-neutral-500 uppercase">
                   £
                 </p>
                 <input
                   type="number"
                   inputmode="decimal"
                   step="0.01"
-                  class="w-full rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+                  class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
                   :value="row.price ?? ''"
                   @input="
                     onGroceryPrice(
@@ -216,13 +218,13 @@ function onGroceryPrice(id: string, raw: string) {
 
       <div v-if="isGroceryEdit" class="mt-3">
         <Button
-          class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900"
+          class="rounded-xl bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-900"
           @click="emit('addGrocery')">
           + Aggiungi item
         </Button>
       </div>
 
-      <p class="mt-3 text-xs text-slate-500">
+      <p class="mt-3 text-xs text-neutral-500">
         Nota: questa lista vive dentro
         <span class="font-semibold">usePlanner</span> e finisce nel Backup JSON.
       </p>

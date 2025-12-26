@@ -111,39 +111,39 @@ function submit() {
 </script>
 
 <template>
-  <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+  <section class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-5">
     <div class="mb-4">
-      <h2 class="text-xl font-semibold text-slate-100">Setup iniziale</h2>
-      <p class="mt-1 text-sm text-slate-300">
+      <h2 class="text-xl font-semibold text-neutral-100">Setup iniziale</h2>
+      <p class="mt-1 text-sm text-neutral-300">
         Compila questi dati una volta sola. Poi li potrai modificare più avanti.
       </p>
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2">
       <div class="sm:col-span-2">
-        <p class="text-xs tracking-wide text-slate-400 uppercase">Nome</p>
+        <p class="text-xs tracking-wide text-neutral-400 uppercase">Nome</p>
         <input
           v-model="name"
-          class="mt-2 w-full rounded-lg border bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
-          :class="name.trim() ? 'border-slate-700' : 'border-rose-600'"
+          class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
+          :class="name.trim() ? 'border-neutral-700' : 'border-rose-600'"
           placeholder="es. Matt" />
       </div>
 
       <div>
-        <p class="text-xs tracking-wide text-slate-400 uppercase">Età</p>
+        <p class="text-xs tracking-wide text-neutral-400 uppercase">Età</p>
         <input
           v-model="age"
           type="number"
           inputmode="numeric"
-          class="mt-2 w-full rounded-lg border bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+          class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
           :class="
-            numOrNull(age) != null ? 'border-slate-700' : 'border-rose-600'
+            numOrNull(age) != null ? 'border-neutral-700' : 'border-rose-600'
           "
           placeholder="es. 30" />
       </div>
 
       <div>
-        <p class="text-xs tracking-wide text-slate-400 uppercase">
+        <p class="text-xs tracking-wide text-neutral-400 uppercase">
           Peso attuale (kg)
         </p>
         <input
@@ -151,25 +151,25 @@ function submit() {
           type="number"
           step="0.1"
           inputmode="decimal"
-          class="mt-2 w-full rounded-lg border bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+          class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
           :class="
             numOrNull(startWeight) != null
-              ? 'border-slate-700'
+              ? 'border-neutral-700'
               : 'border-rose-600'
           "
           placeholder="es. 88.0" />
       </div>
 
       <div class="sm:col-span-2">
-        <p class="text-xs tracking-wide text-slate-400 uppercase">Sesso</p>
+        <p class="text-xs tracking-wide text-neutral-400 uppercase">Sesso</p>
         <div class="mt-2 flex flex-wrap gap-2">
           <button
             type="button"
             class="rounded-xl border px-3 py-2 text-sm"
             :class="
               sex === 'male'
-                ? 'border-slate-300 bg-slate-100/10'
-                : 'border-slate-700 bg-slate-950/40 hover:bg-slate-900/40'
+                ? 'border-neutral-300 bg-neutral-100/10'
+                : 'border-neutral-700 bg-neutral-950/40 hover:bg-neutral-900/40'
             "
             @click="sex = 'male'">
             Uomo
@@ -179,8 +179,8 @@ function submit() {
             class="rounded-xl border px-3 py-2 text-sm"
             :class="
               sex === 'female'
-                ? 'border-slate-300 bg-slate-100/10'
-                : 'border-slate-700 bg-slate-950/40 hover:bg-slate-900/40'
+                ? 'border-neutral-300 bg-neutral-100/10'
+                : 'border-neutral-700 bg-neutral-950/40 hover:bg-neutral-900/40'
             "
             @click="sex = 'female'">
             Donna
@@ -190,8 +190,8 @@ function submit() {
             class="rounded-xl border px-3 py-2 text-sm"
             :class="
               sex === 'other'
-                ? 'border-slate-300 bg-slate-100/10'
-                : 'border-slate-700 bg-slate-950/40 hover:bg-slate-900/40'
+                ? 'border-neutral-300 bg-neutral-100/10'
+                : 'border-neutral-700 bg-neutral-950/40 hover:bg-neutral-900/40'
             "
             @click="sex = 'other'">
             Altro
@@ -203,13 +203,13 @@ function submit() {
       </div>
 
       <div
-        class="rounded-xl border border-slate-800 bg-slate-950/30 p-4 sm:col-span-2">
+        class="rounded-xl border border-neutral-800 bg-neutral-950/30 p-4 sm:col-span-2">
         <div class="flex items-center justify-between gap-3">
           <div>
-            <p class="text-sm font-semibold text-slate-100">
+            <p class="text-sm font-semibold text-neutral-100">
               Hai un obiettivo?
             </p>
-            <p class="text-xs text-slate-400">
+            <p class="text-xs text-neutral-400">
               (Peso target + numero di settimane)
             </p>
           </div>
@@ -219,8 +219,8 @@ function submit() {
               class="rounded-xl border px-3 py-2 text-sm"
               :class="
                 !goalEnabled
-                  ? 'border-slate-300 bg-slate-100/10'
-                  : 'border-slate-700 bg-slate-950/40 hover:bg-slate-900/40'
+                  ? 'border-neutral-300 bg-neutral-100/10'
+                  : 'border-neutral-700 bg-neutral-950/40 hover:bg-neutral-900/40'
               "
               @click="goalEnabled = false">
               No
@@ -230,8 +230,8 @@ function submit() {
               class="rounded-xl border px-3 py-2 text-sm"
               :class="
                 goalEnabled
-                  ? 'border-slate-300 bg-slate-100/10'
-                  : 'border-slate-700 bg-slate-950/40 hover:bg-slate-900/40'
+                  ? 'border-neutral-300 bg-neutral-100/10'
+                  : 'border-neutral-700 bg-neutral-950/40 hover:bg-neutral-900/40'
               "
               @click="goalEnabled = true">
               Sì
@@ -241,7 +241,7 @@ function submit() {
 
         <div v-if="goalEnabled" class="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
-            <p class="text-xs tracking-wide text-slate-400 uppercase">
+            <p class="text-xs tracking-wide text-neutral-400 uppercase">
               Peso obiettivo (kg)
             </p>
             <input
@@ -249,17 +249,17 @@ function submit() {
               type="number"
               step="0.1"
               inputmode="decimal"
-              class="mt-2 w-full rounded-lg border bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+              class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
               :class="
                 numOrNull(targetWeight) != null
-                  ? 'border-slate-700'
+                  ? 'border-neutral-700'
                   : 'border-rose-600'
               "
               placeholder="es. 76.0" />
           </div>
 
           <div>
-            <p class="text-xs tracking-wide text-slate-400 uppercase">
+            <p class="text-xs tracking-wide text-neutral-400 uppercase">
               Settimane
             </p>
             <input
@@ -267,10 +267,10 @@ function submit() {
               type="number"
               step="1"
               inputmode="numeric"
-              class="mt-2 w-full rounded-lg border bg-slate-950/40 px-3 py-2 text-sm text-slate-100 outline-none"
+              class="mt-2 w-full rounded-lg border bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
               :class="
                 numOrNull(weeks) != null && (numOrNull(weeks) as number) >= 1
-                  ? 'border-slate-700'
+                  ? 'border-neutral-700'
                   : 'border-rose-600'
               "
               placeholder="es. 12" />
@@ -281,14 +281,14 @@ function submit() {
 
     <div class="mt-5 flex justify-end">
       <Button
-        class="rounded-xl bg-slate-100 px-5 py-2 text-sm font-semibold text-slate-900 disabled:opacity-50"
+        class="rounded-xl bg-neutral-100 px-5 py-2 text-sm font-semibold text-neutral-900 disabled:opacity-50"
         :disabled="!canSubmit"
         @click="submit">
         Start
       </Button>
     </div>
 
-    <p class="mt-3 text-xs text-slate-500">
+    <p class="mt-3 text-xs text-neutral-500">
       Nota: per ora salva tutto in locale (browser). In futuro possiamo
       aggiungere validazioni sull'obiettivo e macro.
     </p>

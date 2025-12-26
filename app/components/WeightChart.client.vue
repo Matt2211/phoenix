@@ -53,7 +53,7 @@ function buildChart() {
           min: props.yMin,
           max: props.yMax,
           ticks: props.stepSize ? { stepSize: props.stepSize } : undefined,
-          grid: { color: 'rgba(148,163,184,0.15)' }, // slate-ish
+          grid: { color: 'rgba(148,163,184,0.15)' }, // neutral-ish
         },
       },
     },
