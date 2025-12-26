@@ -1,5 +1,5 @@
 {
-  "name": "STUDIO3266",
+  "name": "phoenix",
   "type": "module",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxtjs/seo": "^3.2.2",
     "@tailwindcss/vite": "^4.1.16",
+    "chart.js": "^4.5.1",
     "gsap": "^3.13.0",
     "lenis": "^1.3.13",
     "lucide-vue-next": "^0.548.0",

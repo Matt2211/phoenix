@@ -2,6 +2,10 @@
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
+# Structure generator:
+
+tree -I 'node_modules|.git|dist|.nuxt' > struttura.txt
+
 ## Setup
 
 Make sure to install dependencies:

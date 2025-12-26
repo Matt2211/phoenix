@@ -7,9 +7,9 @@ export default defineNuxtConfig({
   modules: ['lenis/nuxt', '@nuxtjs/seo'],
 
   site: {
-    url: 'https://studio3266.com',
-    name: 'STUDIO3266',
-    description: 'A curated hair experience set in a private studio space',
+    url: 'https://phoenix.com',
+    name: 'phoenix',
+    description: 'to add',
     defaultLocale: 'en',
   },
 
@@ -21,11 +21,11 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      titleTemplate: '%s | STUDIO3266',
+      titleTemplate: '%s | phoenix',
       meta: [
         {
           name: 'description',
-          content: 'A curated hair experience set in a private studio space',
+          content: 'to add',
         },
       ],
     },

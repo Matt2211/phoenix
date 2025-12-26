@@ -3,26 +3,19 @@
 │   ├── app.vue
 │   ├── assets
 │   │   └── css
-│   │       ├── general-sans.css
+│   │       ├── jet-brains-mono.css
 │   │       └── main.css
 │   ├── components
+│   │   ├── BackupPanel.vue
 │   │   ├── Button.vue
-│   │   ├── ConsultationModal.vue
-│   │   └── sections
-│   │       ├── About.vue
-│   │       ├── Contact.vue
-│   │       ├── Faq.vue
-│   │       ├── Footer.vue
-│   │       ├── Hero.vue
-│   │       ├── HowItWorks-copy.vue
-│   │       ├── HowItWorks.vue
-│   │       ├── Menu.vue
-│   │       └── TherapyAreas.vue
+│   │   ├── MealPlanEditor.vue
+│   │   ├── ProgressView.vue
+│   │   ├── RoutineChecklist.vue
+│   │   ├── TodayView.vue
+│   │   └── WeightChart.client.vue
+│   ├── composables
+│   │   └── usePlanner.ts
 │   ├── content
-│   │   ├── areas.ts
-│   │   ├── faq.ts
-│   │   ├── home.ts
-│   │   └── howItWorks.ts
 │   ├── error.vue
 │   ├── layouts
 │   │   └── default.vue
@@ -35,30 +28,29 @@
 ├── package.json
 ├── public
 │   ├── _robots.txt
-│   ├── about-placeholder.jpg
-│   ├── about-test.png
-│   ├── Anxiety-bro.svg
-│   ├── Depression-bro.svg
-│   ├── FAQs-bro.svg
+│   ├── aaabstract.jpg
+│   ├── Callum.png
+│   ├── Dan.png
 │   ├── favicon.ico
 │   ├── fonts
-│   │   └── generalSans
-│   │       ├── GeneralSans-Variable.eot
-│   │       ├── GeneralSans-Variable.ttf
-│   │       ├── GeneralSans-Variable.woff
-│   │       └── GeneralSans-Variable.woff2
-│   ├── Health-anxiety.svg
-│   ├── Low-self-esteem-bro.svg
-│   ├── Obsessive-compulsive-disorder.svg
-│   ├── Panic-attack.svg
-│   ├── Phobias.svg
-│   ├── Social-anxiety-bro.svg
-│   ├── Stress-bro.svg
-│   └── Trauma.svg
+│   │   └── jetBrains
+│   │       ├── JetBrainsMono-Variable.eot
+│   │       ├── JetBrainsMono-Variable.ttf
+│   │       ├── JetBrainsMono-Variable.woff
+│   │       └── JetBrainsMono-Variable.woff2
+│   ├── logo.png
+│   ├── studio.png
+│   ├── test-01.png
+│   ├── test-02.png
+│   ├── test-03.png
+│   ├── test-04.png
+│   ├── test-05.png
+│   ├── test-06.png
+│   └── video-test.mp4
 ├── README.md
 ├── server
 │   └── send-email.ts
 ├── struttura.txt
 └── tsconfig.json
 
-14 directories, 48 files
+14 directories, 40 files
