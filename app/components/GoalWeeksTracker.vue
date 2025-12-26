@@ -137,24 +137,14 @@ const headerText = computed(() => {
         </p>
       </button>
 
-      <div class="flex items-center gap-2">
-        <button
-          type="button"
-          class="inline-flex items-center gap-1 rounded-xl border border-neutral-800 bg-neutral-950/20 px-2.5 py-2 text-xs font-semibold text-neutral-200 transition hover:bg-neutral-900/40"
-          @click="goProgress">
-          <span class="hidden sm:inline">View</span>
-          <ChevronRight class="h-4 w-4 text-neutral-300" />
-        </button>
-
-        <button
-          type="button"
-          class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950/20 text-neutral-200 transition hover:bg-neutral-900/40"
-          :aria-label="collapsed ? 'Expand goal weeks' : 'Collapse goal weeks'"
-          @click="toggle">
-          <ChevronDown v-if="collapsed" class="h-5 w-5" />
-          <ChevronUp v-else class="h-5 w-5" />
-        </button>
-      </div>
+      <button
+        type="button"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950/20 text-neutral-200 transition hover:bg-neutral-900/40"
+        :aria-label="collapsed ? 'Expand goal weeks' : 'Collapse goal weeks'"
+        @click="toggle">
+        <ChevronDown v-if="collapsed" class="h-5 w-5" />
+        <ChevronUp v-else class="h-5 w-5" />
+      </button>
     </div>
 
     <!-- Expanded content -->

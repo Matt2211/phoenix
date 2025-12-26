@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { usePlanner } from '~/composables/usePlanner'
 import { getDailyQuote } from '~/data/motivationQuotes'
-import {
-  ArrowDown,
-  ArrowUp,
-  Minus,
-  ChevronRight,
-  MoveRight,
-} from 'lucide-vue-next'
+import { ArrowDown, ArrowUp, Minus, MoveRight } from 'lucide-vue-next'
 
 definePageMeta({ ssr: false })
 
@@ -220,67 +214,15 @@ function onProfileSave(payload: {
                 class="mt-1 text-2xl leading-snug font-semibold text-neutral-100">
                 “{{ dailyQuote }}”
               </h1>
-
-              <button
-                v-if="weightTrend"
-                type="button"
-                class="mt-3 inline-flex w-full items-center justify-between gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/20 px-3 py-2 text-left transition hover:bg-neutral-900/35"
-                @click="goToProgress">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950/30">
-                    <ArrowDown
-                      v-if="weightTrend.status === 'improving'"
-                      class="h-5 w-5 text-emerald-300" />
-                    <ArrowUp
-                      v-else-if="weightTrend.status === 'worsening'"
-                      class="h-5 w-5 text-rose-300" />
-                    <Minus v-else class="h-5 w-5 text-neutral-300" />
-                  </div>
-
-                  <div class="min-w-0">
-                    <p class="text-xs tracking-wide text-neutral-400 uppercase">
-                      Weight trend
-                    </p>
-                    <p
-                      class="mt-0.5 flex items-center gap-x-2 text-sm font-semibold text-neutral-100">
-                      <span class="text-neutral-300">Start</span>
-                      <span class="font-semibold text-neutral-100">
-                        {{ weightTrend.start.toFixed(1) }}kg
-                      </span>
-                      <MoveRight :size="12" />
-                      <span class="text-neutral-300">Now</span>
-                      <span class="font-semibold text-neutral-100">
-                        {{ weightTrend.latest.toFixed(1) }}kg
-                      </span>
-                      <span
-                        class="ml-2"
-                        :class="
-                          weightTrend.status === 'improving'
-                            ? 'text-emerald-300'
-                            : weightTrend.status === 'worsening'
-                              ? 'text-rose-300'
-                              : 'text-neutral-300'
-                        ">
-                        ({{
-                          weightTrend.delta < 0
-                            ? '-'
-                            : weightTrend.delta > 0
-                              ? '+'
-                              : ''
-                        }}{{ weightTrend.deltaAbs.toFixed(1) }}kg)
-                      </span>
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-center gap-2 text-xs font-semibold text-neutral-300">
-                  <span class="hidden sm:inline">View progress</span>
-                  <ChevronRight class="h-4 w-4 text-neutral-400" />
-                </div>
-              </button>
             </div>
+
+            <WeightTrendWidget
+              v-if="weightTrend"
+              :start="weightTrend.start"
+              :latest="weightTrend.latest"
+              :delta="weightTrend.delta"
+              :status="weightTrend.status"
+              :daily="data.daily" />
 
             <GoalWeeksTracker
               class="mt-3"
@@ -292,7 +234,10 @@ function onProfileSave(payload: {
               class="mt-3 w-full rounded-2xl border border-neutral-800 bg-neutral-900/30 p-3">
               <div
                 class="mb-2 flex items-center justify-between text-xs text-neutral-400">
-                <span>Daily progress</span>
+                <p
+                  class="flex items-center gap-2 text-xs tracking-wide text-neutral-400 uppercase">
+                  Daily progress
+                </p>
                 <span class="font-semibold text-neutral-200">
                   {{ doneSteps }}/{{ totalSteps }} • {{ percent }}%
                 </span>
