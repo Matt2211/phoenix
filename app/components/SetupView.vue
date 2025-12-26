@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
 import type { QuoteTone } from '~/data/motivationQuotes'
 import { QUOTE_TONE_LABELS } from '~/data/motivationQuotes'
+import type { UnitSystem } from '~/composables/usePlanner'
 
 type Sex = 'male' | 'female' | 'other' | 'na'
 
@@ -9,6 +11,8 @@ type Profile = {
   age: number | null
   sex: Sex
   startWeight: number | null
+  unitSystem: UnitSystem
+  heightCm: number | null
   quoteTone: QuoteTone
 }
 
@@ -35,6 +39,8 @@ const emit = defineEmits<{
       targetWeight: number | null
       weeks: number | null
       quoteTone: QuoteTone
+      unitSystem: UnitSystem
+      heightCm: number | null
     },
   ): void
 }>()
@@ -49,6 +55,13 @@ const startWeight = ref<string>(
 const sex = ref<Sex>(props.profile.sex ?? 'na')
 const quoteTone = ref<QuoteTone>(props.profile.quoteTone ?? 'gentle')
 
+// Keep it simple: store height in cm, keep unitSystem fixed to metric.
+const unitSystem: UnitSystem = 'metric'
+
+const heightCm = ref<string>(
+  props.profile.heightCm != null ? String(props.profile.heightCm) : '',
+)
+
 const goalEnabled = ref<boolean>(!!props.goal.enabled)
 const targetWeight = ref<string>(
   props.goal.targetWeight != null ? String(props.goal.targetWeight) : '',
@@ -58,24 +71,6 @@ const weeks = ref<string>(
 )
 
 const submitted = ref(false)
-
-watch(
-  () => [props.profile, props.goal],
-  () => {
-    name.value = props.profile.name ?? ''
-    age.value = props.profile.age != null ? String(props.profile.age) : ''
-    startWeight.value =
-      props.profile.startWeight != null ? String(props.profile.startWeight) : ''
-    sex.value = props.profile.sex ?? 'na'
-    quoteTone.value = props.profile.quoteTone ?? 'gentle'
-
-    goalEnabled.value = !!props.goal.enabled
-    targetWeight.value =
-      props.goal.targetWeight != null ? String(props.goal.targetWeight) : ''
-    weeks.value = props.goal.weeks != null ? String(props.goal.weeks) : ''
-  },
-  { deep: true },
-)
 
 function numOrNull(raw: unknown): number | null {
   if (raw === null || raw === undefined) return null
@@ -88,11 +83,37 @@ function numOrNull(raw: unknown): number | null {
   return Number.isFinite(n) ? n : null
 }
 
+function cmToImperial(cm: number): { ft: number; inches: number } {
+  const totalIn = cm / 2.54
+  const ft = Math.floor(totalIn / 12)
+  let inches = Math.round(totalIn - ft * 12)
+  if (inches === 12) return { ft: ft + 1, inches: 0 }
+  return { ft, inches }
+}
+
+const heightImperialPreview = computed(() => {
+  const cm = numOrNull(heightCm.value)
+  if (cm == null) return null
+
+  const rounded = Math.round(cm * 10) / 10
+  if (rounded < 80 || rounded > 250) return null
+
+  const { ft, inches } = cmToImperial(rounded)
+  return `${ft} ft ${inches} in`
+})
+
 const canSubmit = computed(() => {
   if (!name.value.trim()) return false
-  // sex can be 'na' and is allowed now
   if (numOrNull(age.value) == null) return false
   if (numOrNull(startWeight.value) == null) return false
+
+  // Height optional; but if filled, must be realistic.
+  const anyHeightFilled = !!String(heightCm.value ?? '').trim()
+  if (anyHeightFilled) {
+    const cm = numOrNull(heightCm.value)
+    if (cm == null) return false
+    if (cm < 80 || cm > 250) return false
+  }
 
   if (goalEnabled.value) {
     if (numOrNull(targetWeight.value) == null) return false
@@ -108,6 +129,15 @@ function submit() {
   submitted.value = true
   if (!canSubmit.value) return
 
+  const cmRaw = numOrNull(heightCm.value)
+  const cmNormalized =
+    cmRaw == null
+      ? null
+      : (() => {
+          const r = Math.round(cmRaw * 10) / 10
+          return r >= 80 && r <= 250 ? r : null
+        })()
+
   emit('complete', {
     name: name.value.trim(),
     age: numOrNull(age.value),
@@ -117,8 +147,31 @@ function submit() {
     targetWeight: goalEnabled.value ? numOrNull(targetWeight.value) : null,
     weeks: goalEnabled.value ? numOrNull(weeks.value) : null,
     quoteTone: quoteTone.value,
+    unitSystem,
+    heightCm: cmNormalized,
   })
 }
+
+watch(
+  () => [props.profile, props.goal],
+  () => {
+    name.value = props.profile.name ?? ''
+    age.value = props.profile.age != null ? String(props.profile.age) : ''
+    startWeight.value =
+      props.profile.startWeight != null ? String(props.profile.startWeight) : ''
+    sex.value = props.profile.sex ?? 'na'
+    quoteTone.value = props.profile.quoteTone ?? 'gentle'
+
+    heightCm.value =
+      props.profile.heightCm != null ? String(props.profile.heightCm) : ''
+
+    goalEnabled.value = !!props.goal.enabled
+    targetWeight.value =
+      props.goal.targetWeight != null ? String(props.goal.targetWeight) : ''
+    weeks.value = props.goal.weeks != null ? String(props.goal.weeks) : ''
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -167,6 +220,37 @@ function submit() {
           :validator="
             (v) => (numOrNull(v) == null ? 'Enter a valid number' : null)
           " />
+      </div>
+
+      <!-- Height (cm only) -->
+      <div class="sm:col-span-2">
+        <AppInput
+          v-model="heightCm"
+          label="Height (cm)"
+          type="number"
+          step="1"
+          inputmode="numeric"
+          placeholder="e.g. 178"
+          :required="false"
+          :submitted="submitted"
+          :validator="
+            (v) => {
+              const s = String(v ?? '').trim()
+              if (!s) return null
+              const n = numOrNull(s)
+              if (n == null) return 'Enter a valid number'
+              if (n < 80 || n > 250) return 'Enter a realistic height'
+              return null
+            }
+          " />
+
+        <p v-if="heightImperialPreview" class="mt-2 text-xs text-neutral-400">
+          ≈
+          <span class="font-semibold text-neutral-200">{{
+            heightImperialPreview
+          }}</span>
+        </p>
+        <p v-else class="mt-2 text-xs text-neutral-500">Optional.</p>
       </div>
 
       <div class="sm:col-span-2">

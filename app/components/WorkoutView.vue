@@ -9,6 +9,7 @@ import {
   Pencil,
   Plus,
   X,
+  Award,
 } from 'lucide-vue-next'
 
 import type {
@@ -16,6 +17,7 @@ import type {
   WorkoutKey,
   WorkoutTemplates,
   WorkoutExerciseLog,
+  WorkoutExerciseTemplate,
 } from '~/composables/usePlanner'
 
 const props = defineProps<{
@@ -47,6 +49,14 @@ const emit = defineEmits<{
     key: WorkoutKey,
     patch: Partial<{ title: string; subtitle: string }>,
   ): void
+  (
+    e: 'updateTemplateExercise',
+    key: WorkoutKey,
+    index: number,
+    patch: Partial<
+      Pick<WorkoutExerciseTemplate, 'name' | 'sets' | 'repsTarget'>
+    >,
+  ): void
   (e: 'updateItem', key: WorkoutKey, index: number, value: string): void
   (e: 'addItem', key: WorkoutKey): void
   (e: 'removeItem', key: WorkoutKey, index: number): void
@@ -70,10 +80,6 @@ const activeTemplate = computed(() => props.templates[todayWorkout.value])
 const openTemplates = ref(false)
 const isEditTemplates = ref(false)
 
-function toggleWorkoutDone() {
-  emit('toggleDone')
-}
-
 function toggleEditTemplates() {
   isEditTemplates.value = !isEditTemplates.value
   if (isEditTemplates.value) openTemplates.value = true
@@ -85,10 +91,6 @@ function onUpdateTitle(key: WorkoutKey, raw: string) {
 
 function onUpdateSubtitle(key: WorkoutKey, raw: string) {
   emit('updateTemplate', key, { subtitle: raw })
-}
-
-function onUpdateItem(key: WorkoutKey, index: number, raw: string) {
-  emit('updateItem', key, index, raw)
 }
 
 function addItem(key: WorkoutKey) {
@@ -104,7 +106,7 @@ function toggleExercise(exerciseId: string) {
 }
 
 function parseNullableNumber(raw: string): number | null {
-  const v = raw.trim()
+  const v = String(raw ?? '').trim()
   if (!v) return null
   const n = Number(v)
   return Number.isFinite(n) ? n : null
@@ -137,6 +139,50 @@ const hasExerciseMode = computed(() => {
   return !!props.log && Array.isArray(activeTemplate.value?.exercises)
 })
 
+/** ------- Template editor helpers (structured fields) ------- */
+const SETS_MIN = 1
+const SETS_MAX = 10
+
+function safeSetsInput(raw: string): number | null {
+  const v = String(raw ?? '').trim()
+  if (!v) return null
+  const n = Math.round(Number(v))
+  if (!Number.isFinite(n)) return null
+  return Math.min(SETS_MAX, Math.max(SETS_MIN, n))
+}
+
+function safeRepsTargetInput(raw: string): string | null {
+  const v = String(raw ?? '').trim()
+  return v ? v : null
+}
+
+function updateTemplateExerciseName(
+  key: WorkoutKey,
+  index: number,
+  raw: string,
+) {
+  emit('updateTemplateExercise', key, index, { name: raw })
+}
+
+function updateTemplateExerciseSets(
+  key: WorkoutKey,
+  index: number,
+  raw: string,
+) {
+  emit('updateTemplateExercise', key, index, { sets: safeSetsInput(raw) })
+}
+
+function updateTemplateExerciseRepsTarget(
+  key: WorkoutKey,
+  index: number,
+  raw: string,
+) {
+  emit('updateTemplateExercise', key, index, {
+    repsTarget: safeRepsTargetInput(raw),
+  })
+}
+/** ---------------------------------------------------------- */
+
 const iconBtnBase =
   'inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/30 transition hover:bg-neutral-900/60'
 </script>
@@ -151,6 +197,8 @@ const iconBtnBase =
           <span class="truncate">{{ props.today }}</span>
         </p>
       </div>
+
+      <CountDown class="shrink-0" />
     </div>
 
     <!-- Today plan -->
@@ -173,12 +221,12 @@ const iconBtnBase =
 
         <span
           v-if="props.isDone"
-          class="shrink-0 rounded-full border border-emerald-800 bg-emerald-900/20 px-2 py-1 text-[11px] font-semibold text-emerald-300">
-          done
+          class="flex shrink-0 items-center gap-x-2 rounded-md border border-emerald-800 bg-emerald-900/20 px-2 py-1 text-[11px] font-semibold text-emerald-300">
+          <Award :size="16" /> DONE
         </span>
       </div>
 
-      <!-- Exercise mode (recommended) -->
+      <!-- Exercise mode -->
       <div v-if="hasExerciseMode" class="mt-3 space-y-2">
         <div
           v-for="ex in activeTemplate.exercises"
@@ -189,6 +237,18 @@ const iconBtnBase =
               <p class="text-sm font-semibold text-neutral-100">
                 {{ ex.name }}
               </p>
+
+              <p v-if="ex.sets != null || ex.repsTarget" class="mt-0.5 text-xs">
+                <span class="text-neutral-500">Target:</span>
+                <span class="ml-1 text-neutral-300">
+                  <template v-if="ex.sets != null">{{ ex.sets }}×</template>
+                  <template v-if="ex.repsTarget">{{ ex.repsTarget }}</template>
+                  <template v-if="ex.sets != null && !ex.repsTarget"
+                    >sets</template
+                  >
+                </span>
+              </p>
+
               <p
                 v-if="ex.restSeconds != null"
                 class="mt-0.5 text-xs text-neutral-500">
@@ -196,6 +256,7 @@ const iconBtnBase =
               </p>
             </div>
 
+            <!-- check on the RIGHT, disabled until weight+reps -->
             <button
               type="button"
               class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition"
@@ -302,7 +363,7 @@ const iconBtnBase =
               Templates
             </p>
             <p class="text-sm text-neutral-200">
-              View and edit workout templates (A/B/C/Rest)
+              View and edit workout templates (A/B/C)
             </p>
           </div>
 
@@ -313,7 +374,6 @@ const iconBtnBase =
           </div>
         </button>
 
-        <!-- Edit templates toggle -->
         <button
           type="button"
           :class="iconBtnBase"
@@ -327,7 +387,7 @@ const iconBtnBase =
       <div v-if="openTemplates" class="border-t border-neutral-800 px-3 pb-3">
         <div class="mt-3 grid gap-3">
           <div
-            v-for="key in ['A', 'B', 'C', 'REST'] as const"
+            v-for="key in ['A', 'B', 'C'] as const"
             :key="key"
             class="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
             <template v-if="!isEditTemplates">
@@ -340,10 +400,28 @@ const iconBtnBase =
 
               <ul class="mt-2 space-y-2">
                 <li
-                  v-for="(x, i) in props.templates[key].items"
-                  :key="i"
+                  v-for="(ex, i) in props.templates[key].exercises"
+                  :key="ex.id || i"
                   class="rounded-lg border border-neutral-800 bg-neutral-950/30 px-3 py-2 text-sm text-neutral-200">
-                  {{ x }}
+                  <span class="font-semibold text-neutral-100">{{
+                    ex.name
+                  }}</span>
+                  <span
+                    v-if="ex.sets != null || ex.repsTarget"
+                    class="text-neutral-500">
+                    —
+                  </span>
+                  <span v-if="ex.sets != null" class="text-neutral-300"
+                    >{{ ex.sets }}×</span
+                  >
+                  <span v-if="ex.repsTarget" class="text-neutral-300">{{
+                    ex.repsTarget
+                  }}</span>
+                  <span
+                    v-if="ex.sets != null && !ex.repsTarget"
+                    class="text-neutral-300"
+                    >sets</span
+                  >
                 </li>
               </ul>
             </template>
@@ -385,32 +463,87 @@ const iconBtnBase =
                 <div class="mt-1">
                   <p
                     class="mb-2 text-[11px] font-semibold tracking-wide text-neutral-500 uppercase">
-                    Items
+                    Exercises
                   </p>
 
                   <div class="space-y-2">
                     <div
-                      v-for="(x, i) in props.templates[key].items"
-                      :key="i"
-                      class="flex items-center gap-2">
-                      <input
-                        class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
-                        :value="x"
-                        @input="
-                          onUpdateItem(
-                            key,
-                            i,
-                            ($event.target as HTMLInputElement).value,
-                          )
-                        " />
+                      v-for="(ex, i) in props.templates[key].exercises"
+                      :key="ex.id || i"
+                      class="grid gap-2 rounded-xl border border-neutral-800 bg-neutral-950/30 p-3">
+                      <div class="flex items-center justify-between gap-2">
+                        <p class="text-xs font-semibold text-neutral-200">
+                          Exercise {{ i + 1 }}
+                        </p>
+                        <button
+                          type="button"
+                          :class="iconBtnBase"
+                          aria-label="Remove exercise"
+                          @click="removeItem(key, i)">
+                          <X class="h-5 w-5 text-neutral-200" />
+                        </button>
+                      </div>
 
-                      <button
-                        type="button"
-                        :class="iconBtnBase"
-                        aria-label="Remove item"
-                        @click="removeItem(key, i)">
-                        <X class="h-5 w-5 text-neutral-200" />
-                      </button>
+                      <div class="grid gap-2 sm:grid-cols-3">
+                        <div class="grid gap-1 sm:col-span-2">
+                          <p
+                            class="text-[11px] font-semibold tracking-wide text-neutral-500 uppercase">
+                            Name
+                          </p>
+                          <input
+                            class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
+                            :value="ex.name"
+                            placeholder="e.g. Bench press"
+                            @input="
+                              updateTemplateExerciseName(
+                                key,
+                                i,
+                                ($event.target as HTMLInputElement).value,
+                              )
+                            " />
+                        </div>
+
+                        <div class="grid gap-1">
+                          <p
+                            class="text-[11px] font-semibold tracking-wide text-neutral-500 uppercase">
+                            Sets
+                          </p>
+                          <input
+                            type="number"
+                            min="1"
+                            max="10"
+                            step="1"
+                            inputmode="numeric"
+                            class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
+                            :value="ex.sets ?? ''"
+                            placeholder="3"
+                            @input="
+                              updateTemplateExerciseSets(
+                                key,
+                                i,
+                                ($event.target as HTMLInputElement).value,
+                              )
+                            " />
+                        </div>
+
+                        <div class="grid gap-1 sm:col-span-3">
+                          <p
+                            class="text-[11px] font-semibold tracking-wide text-neutral-500 uppercase">
+                            Reps target (optional)
+                          </p>
+                          <input
+                            class="w-full rounded-lg border border-neutral-700 bg-neutral-950/40 px-3 py-2 text-sm text-neutral-100 outline-none"
+                            :value="ex.repsTarget ?? ''"
+                            placeholder="e.g. 6-8 or 10-12 or 10 min"
+                            @input="
+                              updateTemplateExerciseRepsTarget(
+                                key,
+                                i,
+                                ($event.target as HTMLInputElement).value,
+                              )
+                            " />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -418,7 +551,7 @@ const iconBtnBase =
                     <button
                       type="button"
                       class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-800 bg-emerald-900/20 transition hover:bg-emerald-900/40"
-                      aria-label="Add item"
+                      aria-label="Add exercise"
                       @click="addItem(key)">
                       <Plus class="h-5 w-5 text-emerald-300" />
                     </button>

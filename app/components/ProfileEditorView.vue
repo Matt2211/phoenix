@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
 import type { QuoteTone } from '~/data/motivationQuotes'
 
 type Sex = 'male' | 'female' | 'other' | 'na'
@@ -9,6 +10,7 @@ type Profile = {
   sex: Sex
   startWeight: number | null
   quoteTone: QuoteTone
+  heightCm?: number | null
 }
 
 type Goal = {
@@ -35,6 +37,7 @@ const emit = defineEmits<{
       targetWeight: number | null
       weeks: number | null
       quoteTone: QuoteTone
+      heightCm?: number | null
     },
   ): void
 }>()
@@ -45,6 +48,10 @@ const ageRaw = ref(props.profile?.age != null ? String(props.profile.age) : '')
 const sex = ref<Sex>((props.profile?.sex as Sex) ?? 'na')
 const startWeightRaw = ref(
   props.profile?.startWeight != null ? String(props.profile.startWeight) : '',
+)
+
+const heightCmRaw = ref(
+  props.profile?.heightCm != null ? String(props.profile.heightCm) : '',
 )
 
 const quoteTone = ref<QuoteTone>(
@@ -70,6 +77,29 @@ function intOrNull(raw: unknown): number | null {
   const i = Math.round(n)
   return Number.isFinite(i) ? i : null
 }
+
+function normalizeHeightCm(raw: unknown): number | null {
+  const n = numOrNull(raw)
+  if (n == null) return null
+  const r = Math.round(n * 10) / 10
+  if (r < 80 || r > 250) return null
+  return r
+}
+
+function cmToImperial(cm: number): { ft: number; inches: number } {
+  const totalIn = cm / 2.54
+  const ft = Math.floor(totalIn / 12)
+  let inches = Math.round(totalIn - ft * 12)
+  if (inches === 12) return { ft: ft + 1, inches: 0 }
+  return { ft, inches }
+}
+
+const heightImperialPreview = computed(() => {
+  const cm = normalizeHeightCm(heightCmRaw.value)
+  if (cm == null) return null
+  const { ft, inches } = cmToImperial(cm)
+  return `${ft} ft ${inches} in`
+})
 
 const goalWeeks = computed(() => {
   if (!goalEnabled.value) return null
@@ -107,10 +137,36 @@ function onSave() {
     targetWeight: goalEnabled.value ? numOrNull(targetWeightRaw.value) : null,
     weeks: goalEnabled.value ? goalWeeks.value : null,
     quoteTone: quoteTone.value,
+    heightCm: normalizeHeightCm(heightCmRaw.value),
   }
 
   emit('save', payload)
 }
+
+// Keep local fields in sync if parent re-renders with new values
+watch(
+  () => [props.profile, props.goal],
+  () => {
+    name.value = props.profile?.name ?? ''
+    ageRaw.value = props.profile?.age != null ? String(props.profile.age) : ''
+    sex.value = (props.profile?.sex as Sex) ?? 'na'
+    startWeightRaw.value =
+      props.profile?.startWeight != null
+        ? String(props.profile.startWeight)
+        : ''
+
+    heightCmRaw.value =
+      props.profile?.heightCm != null ? String(props.profile.heightCm) : ''
+
+    quoteTone.value = (props.profile?.quoteTone as QuoteTone) ?? 'gentle'
+
+    goalEnabled.value = !!props.goal?.enabled
+    targetWeightRaw.value =
+      props.goal?.targetWeight != null ? String(props.goal.targetWeight) : ''
+    weeksRaw.value = props.goal?.weeks != null ? String(props.goal.weeks) : ''
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -223,6 +279,30 @@ function onSave() {
           :value="startWeightRaw"
           placeholder="e.g. 88.0"
           @input="startWeightRaw = ($event.target as HTMLInputElement).value" />
+      </div>
+
+      <!-- Height (cm) -->
+      <div class="rounded-xl border border-neutral-800 bg-neutral-950/40 p-3">
+        <p
+          class="text-[11px] font-semibold tracking-wide text-neutral-500 uppercase">
+          Height (cm)
+        </p>
+        <input
+          type="number"
+          inputmode="numeric"
+          step="1"
+          class="mt-2 w-full rounded-xl border border-neutral-800 bg-neutral-900/30 px-3 py-2 text-sm text-neutral-100 outline-none"
+          :value="heightCmRaw"
+          placeholder="e.g. 178"
+          @input="heightCmRaw = ($event.target as HTMLInputElement).value" />
+
+        <p v-if="heightImperialPreview" class="mt-2 text-xs text-neutral-500">
+          ≈
+          <span class="font-semibold text-neutral-300">{{
+            heightImperialPreview
+          }}</span>
+        </p>
+        <p v-else class="mt-2 text-xs text-neutral-600">Optional.</p>
       </div>
 
       <!-- Quote tone -->

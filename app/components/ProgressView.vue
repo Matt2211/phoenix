@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Check, X } from 'lucide-vue-next'
 type DailyEntry = {
   weight?: number | null
   sleepHours?: number | null
@@ -13,6 +14,10 @@ type Row = {
   sleepHours: number | null
   energy: number | null
   waterGlasses: number | null
+
+  // workout
+  isWorkoutDay: boolean
+  workoutDone: boolean | null // null = unknown / not provided
 }
 
 type MetricKey = keyof Pick<
@@ -31,6 +36,8 @@ type MetricConfig = {
 
 const props = defineProps<{
   daily: Record<string, DailyEntry>
+  /** Optional: YYYY-MM-DD -> workout completed (from usePlanner.isWorkoutCompleted(date)) */
+  workoutDoneByDate?: Record<string, boolean>
 }>()
 
 const range = ref<14 | 30 | 90 | 0>(30) // 0 = All
@@ -80,6 +87,22 @@ function toNum(v: unknown): number | null {
   return typeof v === 'number' && Number.isFinite(v) ? v : null
 }
 
+function isWorkoutDay(dateKey: string) {
+  const dt = new Date(`${dateKey}T12:00:00`)
+  const day = dt.getDay() // 0 Sun ... 6 Sat
+  return day === 1 || day === 3 || day === 5
+}
+
+function resolveWorkoutDone(dateKey: string): boolean | null {
+  // If the parent doesn't pass workout data, we treat it as unknown.
+  if (!props.workoutDoneByDate) return null
+
+  // If the parent didn't provide a value for this date, keep it unknown.
+  if (props.workoutDoneByDate[dateKey] === undefined) return null
+
+  return !!props.workoutDoneByDate[dateKey]
+}
+
 const rows = computed<Row[]>(() => {
   const items: Row[] = Object.entries(props.daily)
     .map(([date, entry]) => ({
@@ -89,6 +112,9 @@ const rows = computed<Row[]>(() => {
       sleepHours: toNum(entry?.sleepHours),
       energy: toNum(entry?.energy),
       waterGlasses: toNum(entry?.waterGlasses),
+
+      isWorkoutDay: isWorkoutDay(date),
+      workoutDone: resolveWorkoutDone(date),
     }))
     .filter(
       (x) =>
@@ -109,6 +135,26 @@ const rows = computed<Row[]>(() => {
 })
 
 const chartLabels = computed(() => rows.value.map((r) => r.date.slice(5)))
+
+const workoutConsistencyValues = computed<Array<number | null>>(() => {
+  return rows.value.map((r) => {
+    if (!r.isWorkoutDay) return null
+    if (r.workoutDone === null) return null
+    return r.workoutDone ? 1 : 0
+  })
+})
+
+const workoutConsistencySummary = computed(() => {
+  const workoutDays = rows.value.filter((r) => r.isWorkoutDay)
+  const known = workoutDays.filter((r) => r.workoutDone !== null)
+  const done = known.filter((r) => r.workoutDone === true)
+
+  return {
+    workoutDays: workoutDays.length,
+    knownDays: known.length,
+    doneDays: done.length,
+  }
+})
 
 function series(key: MetricKey) {
   return rows.value.map((r) => r[key])
@@ -135,10 +181,7 @@ const latest = computed(() => ({
   waterGlasses: latestValue('waterGlasses'),
 }))
 
-const tableRows = computed(() => {
-  // newest first for the table
-  return [...rows.value].reverse()
-})
+const tableRows = computed(() => [...rows.value].reverse())
 </script>
 
 <template>
@@ -192,9 +235,7 @@ const tableRows = computed(() => {
       </div>
     </div>
 
-    <!-- Charts grid -->
     <div class="grid gap-3 sm:grid-cols-2">
-      <!-- Weight -->
       <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
         <div class="mb-2 flex items-end justify-between">
           <div>
@@ -220,7 +261,6 @@ const tableRows = computed(() => {
         <p v-else class="text-sm text-neutral-400">Nessun dato ancora.</p>
       </div>
 
-      <!-- Sleep -->
       <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
         <div class="mb-2 flex items-end justify-between">
           <div>
@@ -246,7 +286,6 @@ const tableRows = computed(() => {
         <p v-else class="text-sm text-neutral-400">Nessun dato ancora.</p>
       </div>
 
-      <!-- Energy -->
       <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
         <div class="mb-2 flex items-end justify-between">
           <div>
@@ -272,7 +311,6 @@ const tableRows = computed(() => {
         <p v-else class="text-sm text-neutral-400">Nessun dato ancora.</p>
       </div>
 
-      <!-- Water -->
       <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
         <div class="mb-2 flex items-end justify-between">
           <div>
@@ -299,7 +337,42 @@ const tableRows = computed(() => {
       </div>
     </div>
 
-    <!-- Table -->
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
+      <div class="mb-2 flex items-end justify-between">
+        <div>
+          <p class="text-xs tracking-wide text-neutral-400 uppercase">
+            Workout
+          </p>
+        </div>
+      </div>
+
+      <WeightChart
+        type="bar"
+        :labels="chartLabels"
+        :values="workoutConsistencyValues"
+        label="Workout done (1=yes, 0=no)"
+        :yMin="0"
+        :yMax="1"
+        :fillAlpha="0.8"
+        :stepSize="1"
+        :stepped="true" />
+
+      <p class="mt-2 text-xs text-neutral-500">
+        Workout days in range:
+        <span class="font-semibold text-neutral-200">{{
+          workoutConsistencySummary.workoutDays
+        }}</span>
+        • Logged:
+        <span class="font-semibold text-neutral-200">{{
+          workoutConsistencySummary.knownDays
+        }}</span>
+        • Done:
+        <span class="font-semibold text-neutral-200">{{
+          workoutConsistencySummary.doneDays
+        }}</span>
+      </p>
+    </div>
+
     <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
       <div class="mb-3 flex items-center justify-between">
         <h3 class="text-sm font-semibold text-neutral-100">Table</h3>
@@ -307,12 +380,16 @@ const tableRows = computed(() => {
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[820px] border-separate border-spacing-0">
+        <table class="w-full min-w-[900px] border-separate border-spacing-0">
           <thead>
             <tr>
               <th
                 class="border-b border-neutral-800 px-3 py-2 text-left text-xs text-neutral-400">
                 Date
+              </th>
+              <th
+                class="border-b border-neutral-800 px-3 py-2 text-center text-xs text-neutral-400">
+                Workout
               </th>
               <th
                 class="border-b border-neutral-800 px-3 py-2 text-right text-xs text-neutral-400">
@@ -337,6 +414,29 @@ const tableRows = computed(() => {
               <td
                 class="border-b border-neutral-800 px-3 py-2 text-sm text-neutral-200">
                 {{ r.date }}
+              </td>
+              <td class="border-b border-neutral-800 px-3 py-2 text-center">
+                <template v-if="!r.isWorkoutDay">
+                  <span class="text-xs font-semibold text-neutral-500"
+                    >N/A</span
+                  >
+                </template>
+
+                <template v-else>
+                  <template v-if="r.workoutDone === null">
+                    <span class="text-xs font-semibold text-neutral-500"
+                      >N/A</span
+                    >
+                  </template>
+
+                  <template v-else-if="r.workoutDone">
+                    <Check class="mx-auto h-4 w-4 text-emerald-400" />
+                  </template>
+
+                  <template v-else>
+                    <X class="mx-auto h-4 w-4 text-red-400" />
+                  </template>
+                </template>
               </td>
               <td
                 class="border-b border-neutral-800 px-3 py-2 text-right text-sm text-neutral-200">

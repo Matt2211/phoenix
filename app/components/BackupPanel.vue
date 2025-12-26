@@ -32,12 +32,38 @@ function downloadJson() {
 }
 
 function doExport() {
-  text.value = props.exportJson()
-  status.value = '✅ JSON generato. (Puoi copiare/incollare o usare Download.)'
+  try {
+    text.value = props.exportJson()
+    status.value =
+      '✅ Backup JSON generato. (Include: profilo, goal, routine, meals, workout, progress giornaliero.)'
+  } catch (e) {
+    status.value = '❌ Errore durante la generazione del JSON.'
+  }
 }
+
 function doImport() {
-  if (!text.value.trim()) return
-  props.importJson(text.value)
+  const raw = text.value.trim()
+  if (!raw) {
+    status.value = '⚠️ Incolla prima un JSON da importare.'
+    return
+  }
+
+  // Validate JSON before passing it to the composable
+  try {
+    JSON.parse(raw)
+  } catch (e) {
+    status.value =
+      '❌ JSON non valido. Controlla che sia completo e ben formato.'
+    return
+  }
+
+  try {
+    props.importJson(raw)
+    status.value =
+      "✅ Import completato. (Nota: l'import sovrascrive i dati locali correnti.)"
+  } catch (e) {
+    status.value = "❌ Errore durante l'import."
+  }
 }
 </script>
 
@@ -45,14 +71,18 @@ function doImport() {
   <section class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
     <h2 class="mb-2 text-lg font-semibold text-neutral-100">Backup</h2>
     <p class="text-sm text-neutral-400">
-      Exporta/Importa JSON per non perdere mai i dati.
+      Exporta/Importa un backup JSON per non perdere mai i dati.
+      <span class="text-neutral-500">
+        Include profilo (altezza), goal, routine, meals, workout e progress
+        giornaliero.
+      </span>
     </p>
 
     <div class="mt-3 flex flex-wrap justify-between gap-2">
       <div class="flex items-center gap-4">
         <Button @click="doExport"> Export JSON </Button>
 
-        <Button @click="doImport"> Import JSON </Button>
+        <Button @click="doImport"> Import JSON (overwrite) </Button>
       </div>
 
       <Button @click="downloadJson"> Download .json </Button>

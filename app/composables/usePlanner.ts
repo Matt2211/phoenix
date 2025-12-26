@@ -6,11 +6,29 @@ type CheckItem = { id: string; label: string }
 
 type Sex = 'male' | 'female' | 'other' | 'na'
 
+// We currently support metric only (cm / kg). We can re-introduce unit switching later if needed.
+export type UnitSystem = 'metric'
+
+/**
+ * TODO (future ideas)
+ * - Activity level (optional): sedentary / lightly active / active / very active
+ * - Step goal preference (e.g. 8k/10k)
+ * - Training days customization (not just Mon/Wed/Fri)
+ * - Progress charts per lift / bodyweight trend widgets
+ * - Add trophy achievements
+ */
 type Profile = {
   name: string
   age: number | null
   sex: Sex
   startWeight: number | null
+
+  /** Currently fixed to metric (cm / kg). */
+  unitSystem: UnitSystem
+
+  /** Normalized internal value in centimeters. */
+  heightCm: number | null
+
   quoteTone: QuoteTone
 }
 
@@ -23,10 +41,87 @@ type Goal = {
 /** ---------------- Workout ---------------- */
 export type WorkoutKey = 'A' | 'B' | 'C' | 'REST'
 
+const WORKOUT_SETS_MAX = 10
+
 export type WorkoutExerciseTemplate = {
   id: string
   name: string
   restSeconds: number | null
+
+  /** Optional template defaults (editable later in UI) */
+  sets: number | null
+
+  /** Free-form target (e.g. "6-8", "10-12", "10 min", "AMRAP") */
+  repsTarget: string | null
+}
+
+function safeSets(v: unknown): number | null {
+  const n = intOrNull(v)
+  if (n == null) return null
+  if (n < 1) return null
+  return Math.min(WORKOUT_SETS_MAX, n)
+}
+
+function safeRepsTarget(v: unknown): string | null {
+  const s = typeof v === 'string' ? v.trim() : ''
+  return s ? s : null
+}
+
+function parseLegacyExerciseLabel(label: string): {
+  name: string
+  sets: number | null
+  repsTarget: string | null
+} {
+  const raw = String(label ?? '').trim()
+  if (!raw) return { name: '', sets: null, repsTarget: null }
+
+  // Prefer the em dash style used across the app: "Name — 4×6–8"
+  const dash = raw.includes('—') ? '—' : raw.includes(' - ') ? ' - ' : null
+
+  if (!dash) {
+    return { name: raw, sets: null, repsTarget: null }
+  }
+
+  const parts = dash === '—' ? raw.split('—') : raw.split(' - ')
+  const left = (parts[0] ?? '').trim()
+  const right = parts.slice(1).join(dash).trim()
+
+  const name = left || raw
+  const meta = right
+
+  if (!meta) return { name, sets: null, repsTarget: null }
+
+  // 4×6-8, 3x10–12, etc.
+  const m = meta.match(/^(\d+)\s*[x×]\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)\s*$/i)
+  if (m) {
+    const sets = safeSets(m[1])
+    const repsTarget = String(m[2] ?? '')
+      .replace(/\s+/g, '')
+      .replace('–', '-')
+    return { name, sets, repsTarget: repsTarget || null }
+  }
+
+  // "3 sets"
+  const mSets = meta.match(/^(\d+)\s*sets?\b/i)
+  if (mSets) {
+    return { name, sets: safeSets(mSets[1]), repsTarget: null }
+  }
+
+  // Free-form (e.g. "10 min", "AMRAP")
+  return { name, sets: null, repsTarget: meta }
+}
+
+function exerciseToLegacyItem(ex: WorkoutExerciseTemplate): string {
+  const name = String(ex.name ?? '').trim()
+  if (!name) return ''
+
+  const sets = ex.sets
+  const reps = ex.repsTarget
+
+  if (sets != null && reps) return `${name} — ${sets}×${reps}`
+  if (sets != null && !reps) return `${name} — ${sets} sets`
+  if (sets == null && reps) return `${name} — ${reps}`
+  return name
 }
 
 /**
@@ -116,13 +211,21 @@ function workoutForDate(dateKey: string): WorkoutKey {
 
 function defaultWorkoutTemplates(): WorkoutTemplates {
   // Defaults: restSeconds are “sane starting points”. You can change later in UI.
-  const mk = (name: string, restSeconds: number | null) => ({
-    id: makeId(),
-    name,
-    restSeconds,
-  })
+  const mk = (
+    legacyLabel: string,
+    restSeconds: number | null,
+  ): WorkoutExerciseTemplate => {
+    const parsed = parseLegacyExerciseLabel(legacyLabel)
+    return {
+      id: makeId(),
+      name: parsed.name,
+      restSeconds,
+      sets: parsed.sets,
+      repsTarget: parsed.repsTarget,
+    }
+  }
 
-  const Aex = [
+  const Aex: WorkoutExerciseTemplate[] = [
     mk('Bench press — 4×6–8', 120),
     mk('Row (machine or DB) — 4×8–10', 120),
     mk('Incline DB press — 3×8–10', 90),
@@ -131,7 +234,7 @@ function defaultWorkoutTemplates(): WorkoutTemplates {
     mk('Triceps + Biceps — 2–3 sets each', 60),
   ]
 
-  const Bex = [
+  const Bex: WorkoutExerciseTemplate[] = [
     mk('Squat or Leg press — 4×6–10', 150),
     mk('Romanian deadlift — 4×6–10', 150),
     mk('Leg curl — 3×10–12', 90),
@@ -139,7 +242,7 @@ function defaultWorkoutTemplates(): WorkoutTemplates {
     mk('Core (planks / cable crunch) — 3 sets', 60),
   ]
 
-  const Cex = [
+  const Cex: WorkoutExerciseTemplate[] = [
     mk('Pull-ups or pulldown — 3×6–10', 120),
     mk('DB shoulder press — 3×8–12', 120),
     mk('Split squat — 3×8–12 per leg', 120),
@@ -148,13 +251,14 @@ function defaultWorkoutTemplates(): WorkoutTemplates {
     mk('10 min easy cardio cooldown', null),
   ]
 
-  const Rex = [
+  const Rex: WorkoutExerciseTemplate[] = [
     mk('8k–10k steps (easy pace)', null),
     mk('10 min mobility (hips, ankles, shoulders)', null),
     mk('Light stretching (5–10 min)', null),
   ]
 
-  const toItems = (ex: WorkoutExerciseTemplate[]) => ex.map((x) => x.name)
+  const toItems = (ex: WorkoutExerciseTemplate[]) =>
+    ex.map(exerciseToLegacyItem)
 
   return {
     A: {
@@ -229,6 +333,8 @@ function defaultData(): PlannerData {
       age: null,
       sex: 'na',
       startWeight: null,
+      unitSystem: 'metric',
+      heightCm: null,
       quoteTone: 'gentle',
     },
 
@@ -260,31 +366,37 @@ function defaultData(): PlannerData {
     routine: {
       schedule: [
         {
-          time: '07:00-07:30',
-          text: 'Get outside light 10 min + water. Last coffee by 14:00.',
+          time: '07:00',
+          text: 'Morning check-in + water + outside light (10 min).',
         },
-        { time: '08:00', text: 'Fixed breakfast.' },
+        { time: '08:00', text: 'Breakfast.' },
+        { time: '10:30', text: 'Walk (40 min).' },
         {
-          time: '12:30',
-          text: 'Pre-workout snack (banana or whey or yogurt).',
+          time: '13:00',
+          text: 'Workout (Mon/Wed/Fri) or mobility / light movement.',
         },
-        { time: '13:00', text: 'Workout (2–3 days): A/B + optional C.' },
-        { time: '14:15', text: 'Fixed lunch.' },
-        { time: '16:30-17:30', text: 'Protein snack “hunger blocker”.' },
-        { time: '19:00-20:00', text: 'Fixed dinner (lots of veg).' },
-        { time: '22:30', text: 'Shutdown: dim lights, no endless scrolling.' },
+        { time: '14:15', text: 'Lunch.' },
+        { time: '16:30', text: 'Protein shake / snack.' },
+        { time: '18:30', text: 'Walk (40 min).' },
+        { time: '19:30', text: 'Dinner.' },
+        {
+          time: '22:30',
+          text: 'Evening routine (dim lights, no endless scrolling).',
+        },
+        { time: '01:00', text: 'Shutdown (max 1:00am).' },
       ],
       checklist: [
-        { id: 'morning_checkin', label: 'Log weight + sleep + energy' },
-        { id: 'sunlight', label: 'Get outside light (10 min)' },
+        { id: 'morning_checkin', label: 'Morning check-in' },
+        { id: 'sunlight', label: 'Outside light (10 min)' },
         { id: 'breakfast', label: 'Breakfast' },
-        { id: 'steps', label: '8,000–10,000 steps' },
+        { id: 'walk_1', label: 'Walk (40 min)' },
         { id: 'lunch', label: 'Lunch' },
-        { id: 'snack', label: 'Protein snack (16:30–17:30)' },
+        { id: 'snack', label: 'Protein shake / snack' },
         { id: 'workout', label: 'Workout (Mon/Wed/Fri)' },
+        { id: 'walk_2', label: 'Walk (40 min)' },
         { id: 'dinner', label: 'Dinner' },
-        { id: 'shutdown', label: 'Shutdown at 22:30' },
-        { id: 'treat', label: 'Treat only after dinner (if needed)' },
+        { id: 'evening_routine', label: 'Evening routine' },
+        { id: 'shutdown', label: 'Shutdown (max 1:00am)' },
       ],
     },
 
@@ -349,6 +461,14 @@ function safeQuoteTone(v: unknown): QuoteTone {
   return v === 'tough' || v === 'gentle' ? v : 'gentle'
 }
 
+function safeHeightCm(v: unknown): number | null {
+  const n = numOrNull(v)
+  if (n == null) return null
+  // sane human range
+  if (n < 80 || n > 250) return null
+  return n
+}
+
 function safeWeeks(v: unknown): number | null {
   const n = intOrNull(v)
   if (n == null) return null
@@ -394,13 +514,15 @@ function normalizeWorkoutTemplate(
           id: typeof x.id === 'string' ? x.id : makeId(),
           name: String(x.name ?? ''),
           restSeconds: safeRestSeconds(x.restSeconds),
+          sets: safeSets(x.sets),
+          repsTarget: safeRepsTarget(x.repsTarget),
         }),
       )
       .filter((e: WorkoutExerciseTemplate) => e.name.trim().length)
 
     if (ex.length) {
       base.exercises = ex
-      base.items = ex.map((e) => e.name) // keep in sync
+      base.items = ex.map(exerciseToLegacyItem)
       return base
     }
   }
@@ -410,11 +532,16 @@ function normalizeWorkoutTemplate(
     const items = incoming.items.filter((x: any) => typeof x === 'string')
     if (items.length) {
       base.items = items
-      base.exercises = items.map((name: string) => ({
-        id: makeId(),
-        name,
-        restSeconds: null,
-      }))
+      base.exercises = items.map((label: string) => {
+        const parsed = parseLegacyExerciseLabel(label)
+        return {
+          id: makeId(),
+          name: parsed.name,
+          restSeconds: null,
+          sets: parsed.sets,
+          repsTarget: parsed.repsTarget,
+        }
+      })
       return base
     }
   }
@@ -440,6 +567,9 @@ function safeLoadPlanner(raw: string): PlannerData | null {
     base.profile.age = numOrNull(p.age)
     base.profile.sex = safeSex(p.sex)
     base.profile.startWeight = numOrNull(p.startWeight)
+    // Keep metric-only for now (ignore any legacy stored value).
+    base.profile.unitSystem = 'metric'
+    base.profile.heightCm = safeHeightCm(p.heightCm)
     base.profile.quoteTone = safeQuoteTone(p.quoteTone)
   }
 
@@ -711,14 +841,21 @@ function initClientOnce() {
   ;(['A', 'B', 'C', 'REST'] as WorkoutKey[]).forEach((k) => {
     const t = data.value.workout.templates[k]
     if (!Array.isArray(t.exercises) || !t.exercises.length) {
-      t.exercises = (t.items || []).map((name) => ({
-        id: makeId(),
-        name,
-        restSeconds: null,
-      }))
+      t.exercises = (t.items || []).map((label: string) => {
+        const parsed = parseLegacyExerciseLabel(label)
+        return {
+          id: makeId(),
+          name: parsed.name,
+          restSeconds: null,
+          sets: parsed.sets,
+          repsTarget: parsed.repsTarget,
+        }
+      })
     }
+
+    // Keep legacy list in sync for older UIs
     if (!Array.isArray(t.items) || !t.items.length) {
-      t.items = t.exercises.map((x) => x.name)
+      t.items = t.exercises.map(exerciseToLegacyItem)
     }
   })
 
@@ -750,12 +887,20 @@ export function usePlanner() {
     targetWeight: number | null
     weeks: number | null
     quoteTone: QuoteTone
+    unitSystem?: UnitSystem
+    heightCm?: number | null
   }) {
     data.value.profile = {
       name: payload.name,
       age: payload.age,
       sex: payload.sex,
       startWeight: payload.startWeight,
+      // Metric-only for now.
+      unitSystem: 'metric',
+      heightCm:
+        payload.heightCm === undefined
+          ? (data.value.profile.heightCm ?? null)
+          : payload.heightCm,
       quoteTone: payload.quoteTone,
     }
 
@@ -964,6 +1109,56 @@ export function usePlanner() {
     if (patch.title !== undefined) t.title = patch.title
     if (patch.subtitle !== undefined) t.subtitle = patch.subtitle
   }
+  function updateWorkoutTemplateExercise(
+    key: WorkoutKey,
+    index: number,
+    patch: Partial<
+      Pick<WorkoutExerciseTemplate, 'name' | 'sets' | 'repsTarget'>
+    >,
+  ) {
+    const t = data.value.workout.templates[key]
+    if (!t) return
+    if (index < 0) return
+
+    // ensure arrays
+    if (!Array.isArray(t.items)) t.items = []
+    if (!Array.isArray(t.exercises)) t.exercises = []
+
+    // grow exercises if needed
+    while (t.exercises.length <= index) {
+      t.exercises.push({
+        id: makeId(),
+        name: 'New exercise',
+        restSeconds: null,
+        sets: 3,
+        repsTarget: null,
+      })
+    }
+
+    const ex = t.exercises[index]
+    if (!ex) return
+
+    if (patch.name !== undefined) {
+      const nm = String(patch.name ?? '').trim()
+      ex.name = nm || 'New exercise'
+    }
+
+    if (patch.sets !== undefined) {
+      // allow null to mean “no sets specified”
+      ex.sets = patch.sets === null ? null : safeSets(patch.sets)
+    }
+
+    if (patch.repsTarget !== undefined) {
+      ex.repsTarget = safeRepsTarget(patch.repsTarget)
+    }
+
+    // keep legacy list in sync
+    while (t.items.length <= index) {
+      const src = t.exercises[t.items.length]
+      t.items.push(src ? exerciseToLegacyItem(src) : 'New exercise')
+    }
+    t.items[index] = exerciseToLegacyItem(ex)
+  }
 
   function updateWorkoutItem(key: WorkoutKey, index: number, value: string) {
     const t = data.value.workout.templates[key]
@@ -977,28 +1172,43 @@ export function usePlanner() {
 
     // grow if needed
     while (t.exercises.length <= index) {
-      t.exercises.push({ id: makeId(), name: 'New item', restSeconds: null })
+      t.exercises.push({
+        id: makeId(),
+        name: 'New item',
+        restSeconds: null,
+        sets: 3,
+        repsTarget: null,
+      })
     }
     while (t.items.length <= index) {
-      t.items.push(t.exercises[t.items.length]?.name ?? 'New item')
+      const ex = t.exercises[t.items.length]
+      t.items.push(ex ? exerciseToLegacyItem(ex) : 'New item')
     }
 
     t.items[index] = value
     const ex = t.exercises[index]
     if (!ex) return
-    ex.name = value
+
+    const parsed = parseLegacyExerciseLabel(value)
+    ex.name = parsed.name
+    ex.sets = parsed.sets
+    ex.repsTarget = parsed.repsTarget
   }
 
   function addWorkoutItem(key: WorkoutKey) {
     const t = data.value.workout.templates[key]
     if (!t) return
+
     const ex: WorkoutExerciseTemplate = {
       id: makeId(),
-      name: 'New item',
+      name: 'New exercise',
       restSeconds: null,
+      sets: 3,
+      repsTarget: null,
     }
+
     t.exercises.push(ex)
-    t.items.push(ex.name)
+    t.items.push(exerciseToLegacyItem(ex))
   }
 
   function removeWorkoutItem(key: WorkoutKey, index: number) {
@@ -1068,6 +1278,7 @@ export function usePlanner() {
     isWorkoutCompleted,
     toggleWorkoutCompleted,
     updateWorkoutTemplate,
+    updateWorkoutTemplateExercise,
     updateWorkoutItem,
     addWorkoutItem,
     removeWorkoutItem,

@@ -51,6 +51,7 @@ const {
   isWorkoutCompleted,
   toggleWorkoutCompleted,
   updateWorkoutTemplate,
+  updateWorkoutTemplateExercise,
   updateWorkoutItem,
   addWorkoutItem,
   removeWorkoutItem,
@@ -75,6 +76,22 @@ const doneSteps = computed(() => {
     (acc, item) => acc + (checks[item.id] ? 1 : 0),
     0,
   )
+})
+
+const workoutDoneByDate = computed<Record<string, boolean>>(() => {
+  const out: Record<string, boolean> = {}
+
+  // includi tutte le date che hai in daily
+  for (const dateKey of Object.keys(data.value.daily ?? {})) {
+    out[dateKey] = isWorkoutCompleted(dateKey)
+  }
+
+  // includi anche today (anche se non ha entry in daily)
+  if (out[today.value] === undefined) {
+    out[today.value] = isWorkoutCompleted(today.value)
+  }
+
+  return out
 })
 
 const percent = computed(() =>
@@ -199,6 +216,7 @@ function onProfileSave(payload: {
   targetWeight: number | null
   weeks: number | null
   quoteTone: 'gentle' | 'tough'
+  heightCm?: number | null
 }) {
   completeSetup(payload)
   tab.value = 'settings'
@@ -307,7 +325,8 @@ function onUpdateWorkoutExercise(
           <ProgressView
             v-else-if="tab === 'progress'"
             :key="'progress-' + viewTick"
-            :daily="data.daily" />
+            :daily="data.daily"
+            :workoutDoneByDate="workoutDoneByDate" />
 
           <RoutineChecklist
             v-else-if="tab === 'routine'"
@@ -355,7 +374,8 @@ function onUpdateWorkoutExercise(
             @updateTemplate="updateWorkoutTemplate"
             @updateItem="updateWorkoutItem"
             @addItem="addWorkoutItem"
-            @removeItem="removeWorkoutItem" />
+            @removeItem="removeWorkoutItem"
+            @updateTemplateExercise="updateWorkoutTemplateExercise" />
 
           <BackupPanel
             v-else
