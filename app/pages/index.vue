@@ -282,6 +282,12 @@ function onProfileSave(payload: {
               </button>
             </div>
 
+            <GoalWeeksTracker
+              class="mt-3"
+              :today="today"
+              :goal="data.goal"
+              @goProgress="goToProgress" />
+
             <div
               class="mt-3 w-full rounded-2xl border border-neutral-800 bg-neutral-900/30 p-3">
               <div
