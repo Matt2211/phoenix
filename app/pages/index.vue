@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { usePlanner } from '~/composables/usePlanner'
+import { usePlanner, type HomeWidgetKey } from '~/composables/usePlanner'
 import { getDailyQuote } from '~/data/motivationQuotes'
-import { ArrowDown, ArrowUp, Minus, MoveRight } from 'lucide-vue-next'
+import { GripVertical } from 'lucide-vue-next'
+
+import draggable from 'vuedraggable'
 
 definePageMeta({ ssr: false })
 
@@ -16,6 +18,13 @@ type Tab =
   | 'profile'
 
 const tab = useState<Tab>('app_tab', () => 'today')
+
+// Home widgets reorder mode (shows move controls only when enabled)
+const reorderMode = useState<boolean>('home_reorder_mode', () => false)
+
+watch(tab, (t) => {
+  if (t !== 'today') reorderMode.value = false
+})
 
 const viewTick = ref(0)
 onMounted(() => {
@@ -63,10 +72,19 @@ const {
   // backup
   exportJson,
   importJson,
+
+  // home widgets (order)
+  homeWidgetsOrder,
+  setHomeWidgetsOrder,
 } = usePlanner()
 
 const todayEntry = computed(() => getDailyEntry(today.value))
 const todayChecklist = computed(() => getChecklistForDate(today.value))
+
+const homeWidgetsOrderModel = computed<HomeWidgetKey[]>({
+  get: () => homeWidgetsOrder.value,
+  set: (next) => setHomeWidgetsOrder(next),
+})
 
 const totalSteps = computed(() => todayChecklist.value.length)
 
@@ -254,72 +272,113 @@ function onUpdateWorkoutExercise(
 
         <template v-else>
           <header v-if="tab === 'today'" class="mb-4 flex flex-col gap-3">
-            <div>
+            <div class="flex items-start justify-between gap-3">
               <h1
                 class="mt-1 text-2xl leading-snug font-semibold text-neutral-100">
                 “{{ dailyQuote }}”
               </h1>
-            </div>
 
-            <div
-              class="mt-3 w-full rounded-2xl border border-neutral-800 bg-neutral-900/30 p-3">
-              <div
-                class="mb-2 flex items-center justify-between text-xs text-neutral-400">
-                <p
-                  class="flex items-center gap-2 text-xs tracking-wide text-neutral-400 uppercase">
-                  Daily progress
-                </p>
-                <span class="font-semibold text-neutral-200">
-                  {{ doneSteps }}/{{ totalSteps }} • {{ percent }}%
-                </span>
-              </div>
-
-              <div
-                class="h-3 w-full overflow-hidden rounded-full bg-neutral-800">
-                <div
-                  class="h-full rounded-full bg-linear-to-r from-neutral-400 via-sky-400 to-violet-400 transition-all duration-500"
-                  :style="{ width: percent + '%' }" />
-              </div>
-
-              <p class="mt-2 text-xs text-neutral-400">
-                Next up:
-                <span class="text-neutral-200">{{ nextHeaderAction }}</span>
-              </p>
+              <button
+                type="button"
+                class="mt-1 inline-flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900/40 px-3 py-2 text-xs font-semibold text-neutral-200 hover:bg-neutral-900/70"
+                @click="reorderMode = !reorderMode">
+                {{ reorderMode ? 'Done' : 'Reorder' }}
+              </button>
             </div>
           </header>
 
           <template v-if="tab === 'today'">
-            <TodayView
-              :key="'today-' + viewTick"
-              :today="today"
-              :schedule="data.routine.schedule"
-              :items="todayChecklist"
-              :checkedMap="todayEntry.checks"
-              :weight="todayEntry.weight"
-              :sleepHours="todayEntry.sleepHours"
-              :energy="todayEntry.energy"
-              :waterGlasses="todayEntry.waterGlasses"
-              :waterTarget="waterTarget"
-              @toggle="toggleDaily"
-              @updateWeight="onUpdateWeight"
-              @updateSleepHours="onUpdateSleepHours"
-              @setEnergy="onSetEnergy"
-              @toggleWaterGlass="toggleDailyWaterGlass" />
+            <draggable
+              v-model="homeWidgetsOrderModel"
+              :item-key="(k: HomeWidgetKey) => k"
+              :disabled="!reorderMode"
+              :animation="150"
+              handle=".home-drag-handle"
+              class="mt-4 grid gap-4">
+              <template #item="{ element: key }">
+                <div class="relative">
+                  <button
+                    v-if="reorderMode"
+                    type="button"
+                    class="home-drag-handle absolute top-2 left-2 z-20 inline-flex h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded-lg border border-neutral-100 bg-neutral-100/80 text-neutral-900 hover:bg-neutral-100/70 active:cursor-grabbing"
+                    aria-label="Drag to reorder">
+                    <GripVertical class="h-4 w-4" />
+                  </button>
 
-            <div class="mt-4 grid gap-4">
-              <WeightTrendWidget
-                v-if="weightTrend"
-                :start="weightTrend.start"
-                :latest="weightTrend.latest"
-                :delta="weightTrend.delta"
-                :status="weightTrend.status"
-                :daily="data.daily" />
+                  <!-- 1) Daily progress -->
+                  <div
+                    v-if="key === 'dailyProgress'"
+                    class="w-full rounded-2xl border border-neutral-800 bg-neutral-900/30 p-3">
+                    <div
+                      class="mb-2 flex items-center justify-between text-xs text-neutral-400">
+                      <p
+                        class="flex items-center gap-2 text-xs tracking-wide text-neutral-400 uppercase">
+                        Daily progress
+                      </p>
+                      <span class="font-semibold text-neutral-200">
+                        {{ doneSteps }}/{{ totalSteps }} • {{ percent }}%
+                      </span>
+                    </div>
 
-              <GoalWeeksTracker
-                :today="today"
-                :goal="data.goal"
-                @goProgress="goToProgress" />
-            </div>
+                    <div
+                      class="h-3 w-full overflow-hidden rounded-full bg-neutral-800">
+                      <div
+                        class="h-full rounded-full bg-linear-to-r from-neutral-400 via-sky-400 to-violet-400 transition-all duration-500"
+                        :style="{ width: percent + '%' }" />
+                    </div>
+
+                    <p class="mt-2 text-xs text-neutral-400">
+                      Next up:
+                      <span class="text-neutral-200">{{
+                        nextHeaderAction
+                      }}</span>
+                    </p>
+                  </div>
+
+                  <!-- 2) Today panel -->
+                  <TodayView
+                    v-else-if="key === 'todayPanel'"
+                    :key="'today-' + viewTick"
+                    :today="today"
+                    :schedule="data.routine.schedule"
+                    :items="todayChecklist"
+                    :checkedMap="todayEntry.checks"
+                    :weight="todayEntry.weight"
+                    :sleepHours="todayEntry.sleepHours"
+                    :energy="todayEntry.energy"
+                    :waterGlasses="todayEntry.waterGlasses"
+                    :waterTarget="waterTarget"
+                    @toggle="toggleDaily"
+                    @updateWeight="onUpdateWeight"
+                    @updateSleepHours="onUpdateSleepHours"
+                    @setEnergy="onSetEnergy"
+                    @toggleWaterGlass="toggleDailyWaterGlass" />
+
+                  <!-- 3) Goal weeks -->
+                  <GoalWeeksTracker
+                    v-else-if="key === 'goalWeeks'"
+                    :today="today"
+                    :goal="data.goal"
+                    @goProgress="goToProgress" />
+
+                  <!-- 4) Weight trend -->
+                  <WeightTrendWidget
+                    v-else-if="key === 'weightTrend' && weightTrend"
+                    :start="weightTrend.start"
+                    :latest="weightTrend.latest"
+                    :delta="weightTrend.delta"
+                    :status="weightTrend.status"
+                    :daily="data.daily" />
+
+                  <!-- Fallback -->
+                  <div
+                    v-else
+                    class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4 text-sm text-neutral-400">
+                    Widget unavailable.
+                  </div>
+                </div>
+              </template>
+            </draggable>
           </template>
 
           <ProgressView

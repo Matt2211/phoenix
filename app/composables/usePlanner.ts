@@ -8,6 +8,50 @@ type Sex = 'male' | 'female' | 'other' | 'na'
 
 // We currently support metric only (cm / kg). We can re-introduce unit switching later if needed.
 export type UnitSystem = 'metric'
+export type HomeWidgetKey =
+  | 'dailyProgress'
+  | 'todayPanel'
+  | 'goalWeeks'
+  | 'weightTrend'
+
+type UIState = {
+  homeWidgetsOrder: HomeWidgetKey[]
+}
+
+const DEFAULT_HOME_WIDGETS: HomeWidgetKey[] = [
+  'dailyProgress',
+  'todayPanel',
+  'goalWeeks',
+  'weightTrend',
+]
+
+function sanitizeHomeWidgetsOrder(order: unknown): HomeWidgetKey[] {
+  const arr = Array.isArray(order) ? order : []
+
+  const seen = new Set<HomeWidgetKey>()
+  const out: HomeWidgetKey[] = []
+
+  for (const k of arr) {
+    if (
+      k === 'dailyProgress' ||
+      k === 'todayPanel' ||
+      k === 'goalWeeks' ||
+      k === 'weightTrend'
+    ) {
+      const kk = k as HomeWidgetKey
+      if (!seen.has(kk)) {
+        seen.add(kk)
+        out.push(kk)
+      }
+    }
+  }
+
+  for (const k of DEFAULT_HOME_WIDGETS) {
+    if (!seen.has(k)) out.push(k)
+  }
+
+  return out.length ? out : [...DEFAULT_HOME_WIDGETS]
+}
 
 /**
  * TODO (future ideas)
@@ -180,6 +224,7 @@ type DailyEntry = {
 
 type PlannerData = {
   setupCompleted: boolean
+  ui: UIState
   profile: Profile
   goal: Goal
   workout: WorkoutState
@@ -328,6 +373,10 @@ function defaultData(): PlannerData {
   return {
     setupCompleted: false,
 
+    ui: {
+      homeWidgetsOrder: [...DEFAULT_HOME_WIDGETS],
+    },
+
     profile: {
       name: '',
       age: null,
@@ -410,9 +459,7 @@ function makeChecklistId(label: string) {
     .trim()
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '')
-  return `${base}-${Date.now().toString(36)}-${Math.random()
-    .toString(36)
-    .slice(2, 7)}`
+  return `${base}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
 }
 
 function sanitizeChecklistIds(data: any) {
@@ -558,6 +605,12 @@ function safeLoadPlanner(raw: string): PlannerData | null {
   // setup
   if (typeof (parsed as any).setupCompleted === 'boolean') {
     base.setupCompleted = (parsed as any).setupCompleted
+  }
+
+  // ui
+  if (isPlainObject((parsed as any).ui)) {
+    const ui = (parsed as any).ui
+    base.ui.homeWidgetsOrder = sanitizeHomeWidgetsOrder(ui.homeWidgetsOrder)
   }
 
   // profile
@@ -744,6 +797,20 @@ function persistPlanner(data: PlannerData) {
 
 // ---- singleton state ----
 const data = ref<PlannerData>(defaultData())
+
+function getHomeWidgetsOrder(): HomeWidgetKey[] {
+  return sanitizeHomeWidgetsOrder(data.value.ui?.homeWidgetsOrder)
+}
+
+function setHomeWidgetsOrder(next: HomeWidgetKey[]) {
+  if (!data.value.ui) {
+    data.value.ui = { homeWidgetsOrder: [...DEFAULT_HOME_WIDGETS] }
+  }
+  data.value.ui.homeWidgetsOrder = sanitizeHomeWidgetsOrder(next)
+}
+
+const homeWidgetsOrder = computed(() => getHomeWidgetsOrder())
+
 const today = computed(() => isoDate(new Date()))
 
 function ensureToday(dateKey = today.value): DailyEntry {
@@ -833,6 +900,15 @@ function initClientOnce() {
     sanitizeChecklistIds(data.value)
   } catch {
     // ignore
+  }
+
+  // Ensure UI defaults exist (extra safety)
+  if (!(data.value as any).ui) {
+    ;(data.value as any).ui = { homeWidgetsOrder: [...DEFAULT_HOME_WIDGETS] }
+  } else {
+    ;(data.value as any).ui.homeWidgetsOrder = sanitizeHomeWidgetsOrder(
+      (data.value as any).ui.homeWidgetsOrder,
+    )
   }
 
   ensureToday(today.value)
@@ -1109,6 +1185,7 @@ export function usePlanner() {
     if (patch.title !== undefined) t.title = patch.title
     if (patch.subtitle !== undefined) t.subtitle = patch.subtitle
   }
+
   function updateWorkoutTemplateExercise(
     key: WorkoutKey,
     index: number,
@@ -1292,5 +1369,8 @@ export function usePlanner() {
     // backup
     exportJson,
     importJson,
+
+    homeWidgetsOrder,
+    setHomeWidgetsOrder,
   }
 }
