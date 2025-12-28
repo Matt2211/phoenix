@@ -123,16 +123,13 @@ const headerText = computed(() => {
 </script>
 
 <template>
-  <section
-    v-if="isActive"
-    class="w-full rounded-2xl border border-neutral-800 bg-neutral-900/20">
+  <section v-if="isActive" class="w-full rounded-xl bg-neutral-900/70 p-2">
     <!-- Header / collapsed row -->
     <div class="flex items-center justify-between gap-3 p-3">
       <button type="button" class="min-w-0 text-left" @click="toggle">
-        <p class="text-xs tracking-wide text-neutral-400 uppercase">
-          Goal weeks
-        </p>
-        <p class="mt-0.5 truncate text-sm font-semibold text-neutral-100">
+        <h3 class="mb-2">Goal weeks</h3>
+
+        <p class="truncate text-sm font-semibold text-neutral-100">
           {{ headerText }}
         </p>
       </button>

@@ -116,7 +116,7 @@ function toggle() {
 
 <template>
   <section
-    class="w-full rounded-2xl border border-neutral-800 bg-neutral-900/20">
+    class="w-full min-w-0 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/20">
     <!-- Header (collapsed view) -->
     <div class="flex items-center justify-between gap-3 p-3">
       <button type="button" class="min-w-0 flex-1 text-left" @click="toggle">
@@ -174,7 +174,7 @@ function toggle() {
       <ClientOnly>
         <template v-if="canShowChart">
           <div
-            class="rounded-xl border border-neutral-800 bg-neutral-950/20 p-3">
+            class="box-border w-full min-w-0 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950/20 p-3">
             <WeightChart
               :labels="chartLabels"
               :values="chartValues"

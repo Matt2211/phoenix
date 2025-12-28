@@ -123,7 +123,7 @@ const glassIndexes = computed(() =>
 
 <template>
   <section class="grid gap-4">
-    <div class="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
+    <div class="w-full rounded-xl bg-neutral-900/70 p-4">
       <!-- Next action (priority) -->
       <div class="rounded-lg border border-neutral-800 bg-neutral-950/30 p-3">
         <div class="flex items-center justify-between gap-3">
